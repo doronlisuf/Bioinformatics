@@ -8,12 +8,10 @@ matrixDF
 r <- rowRanges(matrixDF, rows = NULL, cols = NULL, na.rm = FALSE, dim. = dim(matrixDF), useNames = NA)
 
 ranges <- 0
-for(i in 1:26264) {
+for(i in 1:26364) {
   ranges[i] <- r[i,2]-r[i,1]
 }
-df_range <- as.data.frame(ranges)
+hist(ranges)
+max(ranges)
+plot(density(ranges))
 
-
-p <- ggplot(df_range, aes(x=ranges)) + geom_density()
-
-p
