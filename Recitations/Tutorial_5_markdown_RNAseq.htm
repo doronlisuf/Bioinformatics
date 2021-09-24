@@ -1,0 +1,227 @@
+---
+title: "Tutorial_5_markdown"
+date: "4/22/2021"
+output: word_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+#Set your working directory with the data you've downloaded for the tutorial.
+
+setwd("C:/Users/user/Documents/Airway_data")
+```
+We will work with experimental data today. 
+The research paper is ["RNA-Seq Transcriptome Profiling Identifies CRISPLD2 as a Glucocorticoid Responsive Gene that Modulates Cytokine Function in Airway Smooth Muscle Cells"](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0099625) 
+
+The datasets related to the paper can be found at [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778)
+
+We will need a read counts per gene for airway smooth muscle cell lines RNA-Seq experiment.
+The count matrix for this dataset was downloaded from [here](https://maayanlab.cloud/archs4/series/GSE52778)
+In this count matrix, each row represents a gene, each column a sequenced RNA library, and the values give the estimated counts of fragments that were probabilistically assigned to the respective gene in each library by Kallisto.
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+cts_prime <- as.matrix(read.csv("GSE52778-GPL11154_series_matrix.txt",
+                                skip = 78, header=T,sep="\t",row.names="ID_REF")) 
+
+cts<-cts_prime[,c("GSM1275862","GSM1275863",
+                  "GSM1275866","GSM1275867",
+                  "GSM1275870","GSM1275871",
+                  "GSM1275874","GSM1275875")]
+
+cts<-cts[complete.cases(cts), ]
+
+coldata<-read.csv("coldata.csv",
+                  header = T,
+                  row.names=1,
+                  stringsAsFactors=T)
+coldata
+
+library(dplyr)
+coldata<-coldata %>% rename(dex = condition)
+
+levels(coldata$dex)
+
+# when renaming levels, the order must be preserved!
+levels(coldata$dex) <- c("trt","untrt")
+```
+
+Note: it is strongly prefered in R that the first level of a factor be the reference level (e.g. control, or untreated samples). If when the coldata table was assembled the untreated samples were already set as the reference, we will leave it this way, but this is not the case and we will use relevel as shown below. While levels(...) <- above was simply for renaming the character strings associated with levels, relevel is a very different function, which decides how the variables will be coded, and how contrasts will be computed. For a two-group comparison, the use of relevel to change the reference level would flip the sign of a coefficient associated with a contrast between the two groups. You don't need to relevel when your reference is set correctly. 
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+#if we needed to relevel the levels, we would use this code:
+library("magrittr")
+coldata$dex <- relevel(coldata$dex, "untrt")
+```
+
+We now have all the ingredients to prepare our data object in a form that is suitable for analysis, namely:
+
+-cts: a table with the read counts
+-coldata: a table with information about the samples
+
+For running DESeq2 models, you can use R’s formula notation to express any fixed-effects experimental design. DESeq2 uses the same formula notation as, for instance, the lm() function of base R.
+
+To construct the DESeqDataSet object from the matrix of counts and the sample information table, we use:
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+library("DESeq2")
+
+dds <- DESeqDataSetFromMatrix(countData = cts,
+                              colData = coldata,
+                              design = ~ cell + dex)
+dds
+head(assay(dds))
+```
+
+The DESeqDataSet object is very similar to [SummarizedExperiment object](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html), with a few changes. The matrix in `assay` is now accessed with `counts`.
+
+Our count matrix in the DESeqDataSet contains many rows with only zeros, and additionally many rows with only a few reads total. In order to reduce the size of the object, and to increase the speed of our functions, we can remove the rows that have no or nearly no information about the amount of gene expression. Here we apply the most minimal filtering rule: removing rows of the DESeqDataSet that have no counts, or only a single count across all samples.
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+
+nrow(dds)
+dds <- dds[rowSums(counts(dds)) > 1,]
+nrow(dds)
+```
+
+DESeq2 offers two transformations for count data that stabilize the variance across the mean:     
+-The variance stabilizing transformation (VST) for negative binomial data with a dispersion-mean trend implemented in the vst function
+-The regularized-logarithm transformation implemented in rlog() function.
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+rld <- rlog(dds,blind = FALSE)
+head(assay(rld), 3)
+
+vsd <- vst(dds,blind = FALSE)
+head(assay(vsd), 3)
+```
+
+In the above function calls, we specified blind = FALSE, which means that differences between cell lines and treatment (the variables in the design) will not contribute to the expected variance-mean trend of the experiment. The experimental design is not used directly in the transformation, only in estimating the global amount of variability in the counts. For a fully unsupervised transformation, one can set blind = TRUE ( the default).
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+
+sampleDists <- dist(t(assay(rld)))
+sampleDists
+
+library ("pheatmap")
+library ("RColorBrewer")
+
+sampleDistMatrix <- as.matrix( sampleDists )
+rownames(sampleDistMatrix) <- paste( rld$dex, rld$cell, sep = " - " )
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+
+#Heatmap of sample-to-sample distances using the regularized-logarithm transformed values
+pheatmap(sampleDistMatrix,
+         clustering_distance_rows = sampleDists,
+         clustering_distance_cols = sampleDists,
+         col = colors)
+```
+
+In the sample distance heatmap made previously, the dendrogram at the side shows us a hierarchical clustering of the samples. Such a clustering can also be performed for the genes. Since the clustering is only relevant for genes that actually carry a signal, one usually would only cluster a subset of the most highly variable genes. Here, for demonstration, let us select the 20 genes with the highest variance across samples.
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+#rowVars: Variance estimates for each row in a matrix
+topVarGenes <- head(order(rowVars(assay(vsd)), decreasing = TRUE), 20)
+
+mat  <- assay(vsd)[topVarGenes, ]
+mat<-mat-rowMeans(mat)
+anno <- as.data.frame(colData(vsd)[, c("cell","dex")])
+pheatmap(mat, annotation_col = anno)
+
+```
+
+
+Treatment status and cell line information are shown with colored bars at the top of the heatmap. Blocks of genes that covary across patients.
+
+### The differential expression pipeline
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+
+dds_analysis <- DESeq(dds)
+#Calling results without any arguments will extract the estimated log2 fold changes and p values for the last variable in the design formula (design = ~ cell + dex)
+res <- results(dds_analysis)
+res
+
+#As res is a data frame that carries also a metadata with information on the meaning of the columns:
+mcols(res, use.names = TRUE)
+summary(res)
+```
+
+If we lower the false discovery rate threshold, we should also inform the results() function about it, so that the function can use this threshold for the optimal independent filtering that it performs:
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+res.05 <- results(dds_analysis, alpha = 0.05)
+table(res.05$padj < 0.05)
+summary(res.05)
+```
+
+If we want to raise the log2 fold change threshold, so that we test for genes that show more substantial changes due to treatment, we simply supply a value on the log2 scale. For example, by specifying lfcThreshold = 1, we test for genes that show significant effects of treatment on gene counts more than doubling or less than halving, because 2^1=2.
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+resLFC1 <- results(dds_analysis, lfcThreshold=1)
+table(resLFC1$padj<0.1)
+```
+
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+results(dds_analysis, contrast = c("cell", "N061011", "N61311"))
+```
+
+We subset the results table to the genes with FDR<0.1 and then sort it by the log2 fold change estimate to get the significant genes with the strongest down-regulation:
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+resSig <- subset(res, padj < 0.1)
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+The genes with the strongest up-regulation due to treatment:
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+
+up<-head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+
+```
+
+### Annotation
+
+Our result table so far only contains the gene SYMBOL IDs, but alternative gene names may be more informative for interpretation and downstream analysis. Bioconductor’s annotation packages help with mapping various ID schemes to each other.
+
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+
+pacman::p_load("AnnotationDbi")
+#fixes a bug in the communication between the latest release of the RSQLite package and RStudio. Without it the org.Hs.eg.db package can't be loaded.
+options(connectionObserver = NULL)
+library(org.Hs.eg.db)
+
+columns(org.Hs.eg.db)
+
+#The genes with the strongest up-regulation due to treatment
+ens.str <- (rownames(res))
+res$ensembl <- mapIds(org.Hs.eg.db,
+                     keys=ens.str,
+                     column="ENSEMBL",
+                     keytype="SYMBOL",
+                     multiVals="first")
+res$entrez <- mapIds(org.Hs.eg.db,
+                     keys=ens.str,
+                     column="ENTREZID",
+                     keytype="SYMBOL",
+                     multiVals="first")
+
+head(res)
+```
+
+### Exporting the results
+```{r, eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+resOrdered <- res[order(res$pvalue),]
+head(resOrdered)
+resOrderedDF <- as.data.frame(resOrdered)[1:100, ]
+write.csv(resOrderedDF, file = "results.csv")
+
+```
+

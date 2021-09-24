@@ -1,0 +1,310 @@
+---
+title: "Tutorial_3_Markdown"
+#date: "4/12/2021"
+output:
+  word_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+## Bioconductor
+Bioconductor is a software ecosystem tailored to genome biology field. It contains:
+- Software for analysis and visualization of data.
+- Annotation of diverse aspects of genome biology for various organisms.
+- Packaged and documented data sets from published experiments.
+
+Bioconductor packages are listed on the [biocViews](https://www.bioconductor.org/packages/release/BiocViews.html) page.
+
+‘Vignettes’ are important features in Bioconductor – those are documented guides that describe how to use the package, with integrated code. Each vignette provides the original source file, a readable HTML page or PDF, and a file of R code.
+
+Vignettes can be evoked by
+
+```{r, echo=TRUE, eval=FALSE}
+browseVignettes("packagename")
+```
+
+
+# IRanges and GRanges
+Many common biological questions are range-based.
+Ranges represent: 
+- Data, e.g., aligned reads, ChIP peaks, SNPs, CpG islands, … 
+- Annotations, e.g., gene models, regulatory elements, methylated regions 
+
+The IRanges and GRanges objects are core components of the Bioconductor infrastructure for defining integer ranges in general (*IRanges*), and specifically for addressing locations in the genome and hence including chromosome and strand information (*GRanges*).Often a metadata is associated with each range, e.g., quality of alignment, strength of ChIP peak.
+
+## IRanges
+
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,message=FALSE}
+library("IRanges")
+```
+The `IRanges` defines interval ranges. If you provide it with two numbers, these are the start,end and width of the inclusive range.
+
+```{r}
+#Let's create the IRanges object applying the IRanges() function
+r1 <- IRanges(5,10)
+r1
+start(r1)
+end(r1)
+width(r1) #`end - start + 1`
+```
+
+A single *IRanges* object can hold more than one range.
+
+```{r}
+r2<-IRanges(start=c(3,5,17), end=c(10,8,20))
+r2
+```
+# Intra-range methods
+
+*Intra-range* methods for IRanges objects are independent of other ranges in the same object,which mean that the operations work on each range independently. 
+
+```{r}
+# help on the intra-range methods: ?"intra-range-methods"
+r1
+shift(r1, -2)
+r1
+flank(r1, width=3, start=TRUE, both=FALSE)
+r1
+flank(r1, width=3, start=FALSE, both=FALSE)
+#resize resizes the ranges to the specified width where either the start, end, or center is used as an anchor.
+resize(r1, 4)
+```
+# Inter-range methods.
+
+*Inter-range* methods are dependent on other ranges in the same object. These methods transform all the ranges together to produce a new set of ranges. Please recall that for *intra-range* methods the other ranges in the set do not change the output. 
+```{r}
+r2 <- IRanges(start=c(3,5,17), end=c(10,8,20))
+#The range() function gives the integer range from #the start of the leftmost range to the end of the #rightmost range:
+r2
+range(r2)
+#The gaps() function gives back the ranges of integers which are in range(r2) but not covered by any of the ranges in r2:
+r2
+gaps(r2)
+#The disjoin() function breaks up the ranges so that they do not overlap but still cover the same regions:
+r2
+disjoin(r2)
+```
+
+### Rle
+*Rle* class stands for *Run length encoding*, which is a form of compression for repetitive data. Instead of storing: $[1,1,1,1]$, we would store the number 1, and the number of repeats: 4. The more repetitive the data, the greater the compression with *Rle*.
+We use `str` to examine the internal structure of the Rle.
+
+```{r}
+r <- Rle(c(1,1,1,0,0,-2,-2,-2,rep(-1,20)))
+#str() function (base R) is used for compactly displaying the internal structure of a R object.
+str(r)
+as.numeric(r)
+```
+
+#GenomicRanges
+
+The "GenomicRanges" package serves as the foundation for representing genomic locations within the Bioconductor project. In the Bioconductor package hierarchy, it builds upon the "IRanges" infrastructure package and provides support for the various Bioconductor packages such as "BSgenome","Rsamtools","ShortRead","GenomicFeatures","GenomicAlignments","VariantAnnotation" and many more. This package lays a foundation for genomic analysis by introducing three classes (*GRanges*, *GPos*, and *GRangesList*), which are used to represent genomic ranges, genomic positions, and groups of genomic ranges. 
+Note that most of the functions that were defined for IRanges are also defined for GRanges.
+
+## GRanges
+
+GRanges can be used to store the location of genomic features such as binding sites, transcripts, exons, etc.
+
+The *GRanges* class is a container for the genomic locations and their associated annotations.
+*GRanges* contain *IRanges* object and two more important pieces of information:
+
+* the chromosome we are referring to (object `seqnames`).
+* the strand of DNA we are referring to (object `strand`).
+
+Because DNA has two strands, which have an opposite directionality, strand is necessary for uniquely referring to DNA. Strand can be specified as plus "+" or minus "-", or left unspecified with "\*". 
+Plus strand features have the biological direction from left to right (sense) and minus strand features have the biological direction from right to left (antisense).    
+*In terms of the *IRanges*, plus strand features go from `start` to `end`, and minus strand features go from `end` to `start`. This may seem a bit confusing at first, but this is required because `width` is defined as `end - start + 1`, and negative width ranges are not allowed.*
+
+-A reminder regarding sense and antisense is found 
+[here](https://en.wikipedia.org/wiki/Sense_(molecular_biology)).
+
+With an *IRange*, a chromosome name, and a strand, we can be sure we are uniquely referring to the same region and strand of the DNA molecule as another researcher, given that we are using the same [build of *reference genome*](https://en.wikipedia.org/wiki/Reference_genome). 
+-For humans, the Genome Research Consortium signed off on build 37 (hg19) in 2009, and on build 38(hg38) in 2013.
+There are other pieces of information which can be contained within a GRanges object, but the two above are the most important.
+
+```{r,echo=TRUE,eval=TRUE,warning=FALSE,message=FALSE}
+library("GenomicRanges")
+
+```
+
+
+```{r, echo=TRUE}
+#Creating a GRanges object by GRanges() function
+
+gr <- GRanges(seqnames ="chrZ", IRanges(start=c(2,8,13),end=c(25,32,50)),
+              strand="+", seqlengths=c(chrZ=70))
+genome(gr) <- "hg19"
+gr
+seqnames(gr)
+seqlengths(gr)
+ranges(gr)
+strand(gr)
+gr
+shift(gr, 40) #out of the chromosome range chrZ=70
+trim(shift(gr, 40))
+```
+
+To add columns of information to each range we use the `mcols` function (stands for *metadata columns*). We can remove the columns by assigning `NULL`. We can also define the metadata inside the GRanges construction function, as we will se further. 
+
+```{r}
+mcols(gr)$value <- c(5.2,-6,7)
+gr
+mcols(gr)$value <- NULL
+gr
+```
+
+### GRangesList
+
+Especially when referring to genes, it is useful to create a *list* of GRanges. This is useful for representing groupings, for example the exons which belong to each gene. The elements of the list are the genes, and within each element the exon ranges are defined as GRanges.
+The length of the *GRangesList* is the number of *GRanges* object within.
+
+```{r}
+gr2 <- GRanges(seqnames = "chrZ",IRanges(11:13,51:53),strand = "-")
+grl <- GRangesList(gr, gr2)
+grl
+grl[[2]]
+```
+The metadata columns can be added to GRangesList, one row of metadata for each GRanges object, not for each range. 
+It doesn't show up when we print the GRangesList, but it is still stored and accessible with `mcols`.
+
+```{r}
+mcols(grl)$value <- c(5,7)
+grl
+mcols(grl)
+```
+
+
+### findOverlaps
+
+findOverlaps is commonly used method for comparing GRanges objects. 
+
+First lets build two sets of ranges:
+
+-If we have a data.frame containing scores on a set of genomic ranges, we can call `makeGRangesFromDataFrame()` to promote the data.frame to a GRanges, thus adding semantics, formal constraints, and range-specific functionality.
+
+```{r}
+gr1 <- GRanges("chr3",IRanges(c(90,92,81,103,107),width=15),strand="+")
+gr1
+
+df <- data.frame(
+    seqnames = Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
+    ranges = IRanges(101:110, end = 111:120),
+    strand = Rle(strand(c("-", "+", "*", "+", "-")), c(1, 2, 2, 3, 2)),
+    score = 1:10,
+    GC = seq(0.8, 0.1, length=10))
+gr2 <- makeGRangesFromDataFrame(df, keep.extra.columns=TRUE)
+gr2
+
+```
+
+`findOverlaps` returns a *Hits* object which contains the information about which ranges in the query (the first argument) overlapped which ranges in the subject (the second argument). There are many options for specifying what kind of overlaps should be counted.
+
+```{r}
+fo <- findOverlaps(gr1, gr2)
+fo
+queryHits(fo)
+subjectHits(fo)
+```
+
+
+The functions such as gap(x),reduce(x),shift(x) and more that we saw at the IRanges functions on GRanges also.
+
+```{r}
+gr2
+shift(gr2, 1)# 1-based coordinates!
+```
+
+
+Lets find GC content of the human chromosome 14.  
+For this matter we installed the BSgenome.Hsapiens.UCSC.hg19 package that will provide us with full genome sequences for Homo sapiens (hg19). *Whole-genome sequences are distrubuted by ENSEMBL, NCBI, and others as FASTA files; model organism whole genome sequences are packaged into more user-friendly BSgenome packages.* 
+
+```{r,echo=TRUE,eval=TRUE,messages=FALSE,warning=FALSE}
+library(BSgenome.Hsapiens.UCSC.hg19)
+  chr14_range = GRanges("chr14", IRanges(1,seqlengths(Hsapiens)["chr14"]))
+  chr14_dna <- getSeq(Hsapiens, chr14_range)
+  letterFrequency(chr14_dna, "GC", as.prob=TRUE) #Biostrings package
+```
+
+
+For more information regarding GenomicRanges
+```{r, echo=TRUE, eval=FALSE, warning=FALSE,message=FALSE}
+browseVignettes("GenomicRanges")
+```
+
+
+# Multiple sequence alignment
+
+To demonstrate you the MSA example we will use the msa package. This package provides R interface to the multiple sequence alignment algorithms
+ClustalW, ClustalOmega, and MUSCLE.
+
+Load msa package
+```{r, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+library(msa)
+```
+
+Let's load amino acid sequences from
+one of the example files that are supplied with the msa package:
+
+```{r, echo=TRUE}
+# system.file() is used to find the file we want from a package
+mySequenceFile <- system.file("examples", "exampleAA.fasta",package="msa")
+mySequences <- readAAStringSet(mySequenceFile)
+mySequences
+```
+
+Now lets perform an alignment on the given sequences:
+
+```{r,echo=TRUE}
+myFirstAlignment <- msa(mySequences) #ClustalW is the default algorithm
+myFirstAlignment
+print(myFirstAlignment, show="complete")
+```
+
+If we want the whole alignment to be printed in much more comprehensive manner we can use the `msaPrettyPrint` function (requires LaTeX to be installed on your system), which is highly costomizable. More details regarding this function can be found at the `msa` vignette. 
+
+Let's see how we can convert the msa format for use in other packages using the `msaConvert` function.
+
+First we will install the `seqinr` package
+
+```{r,echo=TRUE,eval=FALSE,warning=FALSE,message=FALSE}
+install.packages("seqinr")
+```
+
+Multiple alignment of Hemoglobin alpha example sequences:
+```{r,echo=TRUE}
+hemoSeq <- readAAStringSet(system.file("examples","HemoglobinAA.fasta",
+package="msa"))
+hemoAln <- msa(hemoSeq)
+hemoAln
+hemoAln2 <- msaConvert(hemoAln, type="seqinr::alignment")
+```
+
+Now we can use the hemoAln2 object in the `seqinr` package
+
+```{r,echo=TRUE,eval=TRUE,warning=FALSE,message=FALSE}
+# sequinr package provides exploratory data analysis and data visualization for biological sequence (DNA and protein) data.
+library(seqinr)
+d <- dist.alignment(hemoAln2, "identity")
+as.matrix(d)[2:5, "HBA1_Homo_sapiens", drop=FALSE]
+
+```
+
+Now we can construct a phylogenetic tree with the neighbor joining algorithm using the nj()
+function from the `ape` package:
+
+```{r,echo=TRUE,eval=TRUE, warning=FALSE, message=FALSE}
+#ape package contains functions for reading, writing, plotting, and manipulating phylogenetic trees
+library(ape)
+hemoTree <- nj(d)
+plot(hemoTree, main="Phylogenetic Tree of Hemoglobin Alpha Sequences")
+```
+
+
+

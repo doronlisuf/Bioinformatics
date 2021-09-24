@@ -1,0 +1,276 @@
+---
+title: "Tutorial_4_Markdown"
+date: "4/13/2021"
+output: word_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=TRUE, eval=T}
+library(tidyverse)
+```
+
+### Factors 
+
+Factors are data structures that are used to represent the categorical data in a convenient form. Categorical variables belong to a limited number of categories.
+Categorical data can be nominal (gender, blood type) or ordinal (education, rating, satisfaction levels). 
+
+Factors can be created using the `factor()` function.
+Let's first create a factor from character.
+When a factor is created from a character vector, all unique values of the vector are taken as levels (categories), and the levels are lexicographically sorted. We sometimes care what order the levels are in, since this can affect how data is plotted or tabulated by various functions. factor() has the `levels=` argument to specify the desired levels order.
+
+```{r}
+degree <- c("M.Sc", "M.Sc", "B.Sc", "Ph.D", "B.Sc", "M.Sc")
+class(degree)
+degree <- factor(degree)
+str(degree)
+class(degree)
+typeof(degree)
+levels(degree)
+```
+
+Calculations on integer vectors can be much faster than on character vectors. However, plain integer vectors are less informative for humans.
+Factor combines the efficiency with readability. The data is stored as an integer and the labels have only be stored once as readable characters.
+
+```{r}
+degree_int <- as.integer(degree)     # coerce to integer
+degree_chr <- as.character(degree)   # coerce to character
+degree
+degree_chr
+degree_int
+
+vec<-factor(c(1,1,1,1,1,0,0,0,3,2,2,4,4,5,5,5))
+vec
+vec_int<-as.integer(vec)
+vec_int
+vec_int<-as.integer(as.character(vec))
+vec_int
+```
+
+
+```{r,eval=FALSE,echo=TRUE}
+
+diabetes_data<-read.csv("Diabetes_data.csv")
+#summary() function shows a summary of characteristics specific to an object.
+summary(diabetes_data)
+
+diabetes_data$Activity<-factor(diabetes_data$Activity,
+                               levels = c( "None","Once a week",
+                                           "Twice a week", 
+                                           "More then twice a week"))
+
+summary(diabetes_data)
+```
+
+### Visualization of data with ggplot2 package
+
+```{r,echo=TRUE,eval=TRUE, warning=FALSE}
+library(ggplot2)
+library(RColorBrewer) #provides various color schemes for graphics
+```
+
+When we produce a plot given the ggplot package we must provide at least the following general parameters:
+
+1. Our data in a data frame.
+2. "aesthetics" (aes()) - How the columns of the data frame will be translated into colors, sizes, and shapes and positions of graphical elements.
+3. "geometric objects" (geom()) - The graphical elements that will be displayed.
+
+```{r, echo=TRUE, eval=FALSE}
+#basic plot
+ggplot(data = diabetes_data,mapping =  aes(x=Gender, y=HbA1c)) +
+    geom_point()
+#lets add some colors
+ggplot(diabetes_data, aes(x=Gender, y=HbA1c, color=Diet)) +
+    geom_point()
+#if we want to plot only a subset of our data
+male_data <- diabetes_data[diabetes_data$Gender == "male",]
+
+#ggplot2 includes eight themes by default #https://ggplot2.tidyverse.org/reference/ggtheme.html
+ggplot(male_data, aes(x=Activity, y=HbA1c, color=Diet)) +
+                  geom_point()+theme_light()
+
+#lets generate a boxplot
+#Missing values are ignored when forming boxplots.
+diabetes_data$Diet<-factor(diabetes_data$Diet,
+                           levels = c("No restriction",
+                                      "Keto",
+                                      "Vegan"))
+
+ggplot(diabetes_data, aes(x=Diet, y=HbA1c, fill=Diet)) +geom_boxplot()
+
+ggplot(na.omit(diabetes_data), 
+         aes(x=Diet, y=HbA1c, fill=Diet))+
+         geom_boxplot()
+
+#If you use ggplot(na.omit(data)). 
+#Please pay attention that when you use na.omit() you omit the whole NA containing row. 
+
+nrow(diabetes_data)
+nrow(na.omit(diabetes_data))
+sum(complete.cases(diabetes_data))
+
+```
+
+More about various boxplots [here](http://www.sthda.com/english/wiki/ggplot2-box-plot-quick-start-guide-r-software-and-data-visualization)
+
+We can generate faceted plots:
+
+```{r, echo=TRUE, eval=FALSE}
+
+ggplot(diabetes_data, aes(x=Age, y=HbA1c, color=Diet)) +
+    geom_point() +
+    facet_grid(rows=vars(Activity),cols =vars(Gender),
+               labeller =label_wrap_gen(width = 15,multi_line = TRUE))
+
+#"~" (tilde) separates the row variable from the column variable. 
+#rows ~ columns.
+
+ggplot(diabetes_data, aes(x=Age, y=HbA1c, color=Diet)) +
+    geom_point() +
+    facet_grid(Activity ~ Gender,
+               labeller =label_wrap_gen(width = 15,multi_line = TRUE))
+
+#more about labeller https://ggplot2.tidyverse.org/reference/labeller.html
+
+ggplot(diabetes_data, aes(x=Age, y=HbA1c, color=Diet)) +
+    geom_point() + 
+    facet_grid(cols=vars(Activity))
+
+ggplot(diabetes_data, aes(x=Age, y=HbA1c, color=Diet)) +
+    geom_point() + 
+    facet_wrap(~Activity)
+
+```
+
+### Color scales from RColorBrewer package
+
+The RColorBrewer scales are documented online [here](http://colorbrewer2.org/).
+
+```{r, echo=TRUE, eval=FALSE}
+display.brewer.all()
+ggplot(diabetes_data, aes(x=City, y=Weight, color=Activity)) +
+    geom_boxplot(width=0.5)+
+    scale_color_brewer(palette="Dark2")
+
+ggplot(diabetes_data, aes(x=City, y=Weight, color=Activity)) +
+    geom_violin(trim = FALSE)+
+    scale_color_brewer(palette="Set3")
+    
+
+#scale_fill_manual() : to use custom colors
+#scale_fill_brewer() : to use color palettes from RColorBrewer package
+#scale_fill_grey() : to use grey color palettes
+
+```
+
+If we want to print the plot out
+
+```{r, echo=TRUE, eval=FALSE}
+output<-ggplot(diabetes_data, aes(x=City, y=Weight, color=Activity)) +
+        geom_boxplot(width=0.5)+
+        scale_color_brewer(palette="Dark2")
+
+#Open a graphic device
+png("ouput.png") #pdf("test.pdf") etc.
+print(output)
+
+#Close the graphic device
+dev.off()
+```
+
+A summary about the ggplot2 package universe can be found [here](https://ggplot2.tidyverse.org/reference/).
+A cheat sheet can be found at the course website.
+
+### Clustering
+
+Clustering is a broad set of techniques for finding subgroups of observations within a data set. When we cluster observations, we want observations in the same group to be similar and observations in different groups to be dissimilar. Clustering allows us to identify which observations are alike, and potentially categorize them based on some measure of inherent similarity or distance.
+
+To perform a cluster analysis in R, generally, the data should be prepared as follows:
+
+1. Rows are observations (individuals) and columns are variables (features)
+2. Any missing value in the data must be removed or estimated.
+3. The data must be standardized (i.e., scaled) to make variables comparable. Recall that, standardization consists of transforming the variables such that they have mean zero and standard deviation one.
+
+
+### K-means clustering
+
+K-means clustering is the simplest and the most commonly used clustering method for splitting a dataset into a set of k groups (clusters).
+
+As we don’t want the k-means algorithm to depend to an arbitrary variable unit, we will scale the data using the `scale()` function.
+k-means algorithm uses variable means.
+
+```{r, echo=TRUE, eval=FALSE, warning=F, message=F}
+diabetes_data<-read.csv("Diabetes_data.csv")
+diabetes_data.sub<-dplyr::select(diabetes_data,c("Age",
+                                          "Height",
+                                          "Weight",
+                                          "HbA1c"))
+rownames(diabetes_data.sub)<-diabetes_data$Patient
+data.scaled<-scale(na.omit(diabetes_data.sub))
+
+```
+
+
+It's simple to compute and visualize the distance matrix using the functions get_dist and fviz_dist from the `factoextra` package. This will illustrate which patients have large dissimilarities (blue) versus those that appear to be fairly similar (red).
+
+```{r,echo=TRUE, eval=TRUE, warning=F, message=F}
+#factoextra package provides functions that allow extraction and visualization of multivariate data analysis output.
+
+library(factoextra)
+
+```
+
+
+```{r, echo=TRUE, eval=FALSE}
+
+distance <- get_dist(head(data.scaled,40),method = "euclidean")
+fviz_dist(distance, gradient = list(low = "blue", mid = "white", high = "red"))
+
+```
+
+We can compute k-means in R with the `kmeans()` function. We'll group the data into three clusters (centers = 3). The kmeans function also has an `nstart` option that attempts multiple initial configurations and reports on the best one. For example, adding nstart = 25 will generate 25 initial configurations. This approach is often recommended.
+
+```{r, echo=TRUE, eval=FALSE}
+#There are few methods to determine the optimal number of clusters.
+
+fviz_nbclust(data.scaled, kmeans, method = "silhouette") +
+            labs(subtitle = "Silhouette method")
+
+fviz_nbclust(data.scaled, kmeans, method = "wss") +
+    geom_vline(xintercept = 4, linetype = 2)+
+    labs(subtitle = "Elbow method")
+
+set.seed(555)
+km.result <- kmeans(data.scaled, centers =3, nstart = 25)
+```
+
+We can view the results by using fviz_cluster(). If there are more than two dimensions (variables) fviz_cluster will perform principal component analysis (PCA) and plot the data points according to the first two principal components that explain the majority of the variance.
+
+```{r, echo=TRUE, eval=FALSE}
+fviz_cluster(km.result,data.scaled)
+
+```
+
+
+### Heatmaps
+
+A heatmap is a graphical representation of data that uses a system of color-coding to represent different values. 
+Heatmaps are very useful plots for visualizing the measurements for a subset of rows over all the samples.
+A heatmap can be used to visualize hierarchical clustering.
+
+heatmap() function takes as input a matrix. If you have a data frame, you can convert it to a matrix with as.matrix(), but you need numeric variables only.
+
+There are a multiple numbers of R packages and functions for drawing interactive and static heatmaps :
+
+-heatmap() (R base function): Draws a simple heatmap    
+-heatmap.2() (`gplots` package): Draws an enhanced heatmap compared to the R base function.    
+-pheatmap() (`pheatmap` package): Draws pretty heatmaps and provides more control to change the appearance of heatmaps.    
+-d3heatmap() (`d3heatmap` package): Draws an interactive/clickable heatmap.    
+-Heatmap() [`ComplexHeatmap` R/Bioconductor package]: Draws, annotates and arranges complex heatmaps.    
+
+
+

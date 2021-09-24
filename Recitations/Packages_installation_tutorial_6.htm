@@ -1,0 +1,23 @@
+---
+title: "Packages installation Tutorial 6"
+author: "Alona Rabner"
+output: word_document
+---
+## Packages for Tutorial 6
+
+Please install packages by the following order:
+
+```{r}
+
+install.packages('devtools')
+devtools::install_github('dviraran/xCell')
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+install.packages("BiocManager")
+BiocManager::install(c("GSVA","GSEABase"), version = "3.12")
+
+install.packages('pracma', 'utils', ' stats ', ' MASS ',
+'digest', 'curl', 'quadprog','psych')
+
+```
+

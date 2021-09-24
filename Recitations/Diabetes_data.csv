@@ -1,0 +1,355 @@
+Patient,HbA1c,City,Age,Gender,Height,Weight,Diet,Activity
+P1,4.84000015,Tel-Aviv,30,male,175.3,86.6,No restriction,Twice a week
+P10,4.78999996,Haifa,31,female,170.2,103,Vegan,None
+P100,4.55999994,Haifa,65,female,160,105.7,Vegan,None
+P101,7.13999987,Tel-Aviv,59,female,167.6,85.7,Keto,Twice a week
+P102,4.03999996,Haifa,37,male,180.3,88.5,No restriction,None
+P103,8.81000042,Haifa,40,female,149.9,92.5,Keto,None
+P104,5.48999977,Haifa,61,female,160,90.3,No restriction,None
+P105,4.44000006,Tel-Aviv,59,male,185.4,84.8,Vegan,Once a week
+P106,4.63999987,Haifa,36,female,162.6,83.9,No restriction,Once a week
+P107,4.4000001,Haifa,45,female,170.2,66.7,No restriction,Twice a week
+P108,NA,Haifa,57,male,167.6,110,No restriction,More then twice a week
+P109,5.23999977,Haifa,68,female,154.9,54,No restriction,More then twice a week
+P11,5.09000015,Haifa,44,female,162.6,72.6,Vegan,Once a week
+P110,4.03000021,Haifa,41,female,157.5,83.5,No restriction,More then twice a week
+P111,4.80999994,Haifa,68,male,170.2,71.7,Keto,None
+P112,4.82000017,Tel-Aviv,68,male,139.7,59,Keto,None
+P113,5.23000002,Tel-Aviv,79,female,165.1,60.8,No restriction,None
+P114,4.30999994,Tel-Aviv,40,female,NA,59,Vegan,None
+P115,8.25,Tel-Aviv,63,female,154.9,90.7,No restriction,Twice a week
+P116,5.21999979,Tel-Aviv,62,male,167.6,113.9,No restriction,Once a week
+P117,4.94999981,Tel-Aviv,55,male,177.8,63.5,No restriction,None
+P118,4.01000023,Tel-Aviv,55,female,160,51.7,Keto,None
+P119,4.67000008,Tel-Aviv,27,female,170.2,94.8,Vegan,Once a week
+P12,4.80999994,Tel-Aviv,34,male,180.3,86.2,No restriction,Once a week
+P120,6.17000008,Haifa,66,male,172.7,95.3,Keto,None
+P121,4.76000023,Haifa,63,female,162.6,81.2,Keto,None
+P122,4.65999985,Haifa,78,male,165.1,49.4,Keto,None
+P123,5.5,Tel-Aviv,64,female,157.5,75.7,Keto,None
+P124,4.01000023,Tel-Aviv,28,male,175.3,59,Vegan,Once a week
+P125,3.54999995,Tel-Aviv,40,female,172.7,81.2,Vegan,None
+P126,10.0900002,Tel-Aviv,61,female,160,65.3,Vegan,None
+P127,5.0999999,Tel-Aviv,34,female,160,74.4,Vegan,Twice a week
+P128,5.38000011,Tel-Aviv,44,female,NA,86.2,Keto,Once a week
+P129,4.63999987,Tel-Aviv,51,female,167.6,49.9,Vegan,None
+P13,4.63000011,Tel-Aviv,67,male,170.2,54,Vegan,None
+P130,5.13000011,Tel-Aviv,50,female,154.9,66.7,Keto,None
+P131,6.96000004,Tel-Aviv,45,male,175.3,92.5,Keto,None
+P132,5.36000013,Tel-Aviv,38,female,160,82.1,Keto,None
+P133,5.53000021,Tel-Aviv,20,male,177.8,84.8,Keto,None
+P134,4.26000023,Haifa,63,male,177.8,82.1,Keto,Twice a week
+P135,5.69999981,Tel-Aviv,63,male,175.3,75.3,Vegan,Twice a week
+P136,4.73999977,Tel-Aviv,36,female,167.6,115.7,Keto,None
+P137,5.26000023,Tel-Aviv,36,male,175.3,93,Vegan,None
+P138,10.4700003,Tel-Aviv,47,male,185.4,117.9,Vegan,None
+P139,5.17000008,Tel-Aviv,30,male,182.9,113.4,Vegan,Once a week
+P14,4.76999998,Haifa,60,female,165.1,70.8,Keto,None
+P140,4.5,Tel-Aviv,20,female,157.5,52.2,Keto,Twice a week
+P141,4.36999989,Tel-Aviv,31,female,167.6,86.2,Keto,More then twice a week
+P142,6.42000008,Tel-Aviv,65,male,175.3,82.6,No restriction,None
+P143,4.36000013,Tel-Aviv,44,male,180.3,76.2,Keto,More then twice a week
+P144,7.48000002,Tel-Aviv,62,female,160,131.5,Keto,More then twice a week
+P145,5.03000021,Tel-Aviv,59,female,160,79.8,No restriction,None
+P146,4.40999985,Tel-Aviv,37,female,162.6,65.8,No restriction,Once a week
+P147,5.67999983,Tel-Aviv,78,male,167.6,78,No restriction,None
+P148,4.07000017,Tel-Aviv,38,female,175.3,75.7,No restriction,None
+P149,4.61999989,Tel-Aviv,38,male,175.3,93,No restriction,None
+P15,7.71999979,Tel-Aviv,64,male,172.7,83,No restriction,None
+P150,3.70000005,Tel-Aviv,41,male,170.2,83,No restriction,None
+P151,7.51000023,Tel-Aviv,73,female,162.6,78.9,No restriction,None
+P152,4.34000015,Haifa,50,male,170.2,63.5,Vegan,More then twice a week
+P153,5.01999998,Haifa,48,male,172.7,88.9,Vegan,More then twice a week
+P154,4.36000013,Haifa,41,female,160,69.4,Vegan,More then twice a week
+P155,3.32999992,Tel-Aviv,29,male,172.7,77.1,Vegan,None
+P156,4.17999983,Tel-Aviv,76,male,167.6,85.3,No restriction,None
+P157,4.78000021,Tel-Aviv,69,female,149.9,81.2,No restriction,None
+P158,4.73999977,Tel-Aviv,26,male,182.9,117.5,No restriction,Once a week
+P159,3.97000003,Tel-Aviv,70,female,167.6,90.7,No restriction,Twice a week
+P16,4.96999979,Haifa,38,female,147.3,88.5,Keto,None
+P160,6.42000008,Tel-Aviv,25,male,180.3,73.5,No restriction,None
+P161,6.48000002,Tel-Aviv,42,female,157.5,64,No restriction,None
+P162,5.5999999,Tel-Aviv,56,male,172.7,83,No restriction,Once a week
+P163,4.8499999,Tel-Aviv,31,female,170.2,72.6,Keto,None
+P164,4.61000013,Tel-Aviv,31,female,165.1,54.4,Vegan,None
+P165,4.0999999,Tel-Aviv,27,female,165.1,65.8,No restriction,None
+P166,3.75,Tel-Aviv,71,female,160,70.3,No restriction,None
+P167,4.76000023,Tel-Aviv,19,female,152.4,61.2,No restriction,None
+P168,5.03999996,Tel-Aviv,27,female,160,81.2,Keto,None
+P169,5.34000015,Tel-Aviv,31,male,180.3,95.7,Vegan,Once a week
+P17,4.59000015,Haifa,40,female,149.9,74.8,Keto,None
+P170,3.79999995,Tel-Aviv,28,female,170.2,81.6,No restriction,Once a week
+P171,4.67000008,Tel-Aviv,25,female,160,111.1,No restriction,Twice a week
+P172,8.06000042,Tel-Aviv,31,female,157.5,107.5,Vegan,None
+P173,4.9000001,Tel-Aviv,33,male,175.3,73.9,No restriction,None
+P174,10.9700003,Tel-Aviv,26,male,177.8,68,No restriction,None
+P175,4.42999983,Haifa,40,female,162.6,66.2,Keto,None
+P176,2.73000002,Haifa,30,female,157.5,64.4,Keto,None
+P177,5.90999985,Haifa,38,male,172.7,65.8,Vegan,Once a week
+P178,5.11999989,Haifa,52,female,162.6,89.8,Keto,None
+P179,3.77999997,Haifa,22,female,162.6,67.1,Keto,None
+P18,5.0999999,Tel-Aviv,37,male,172.7,114.3,No restriction,None
+P180,5.11999989,Haifa,51,female,165.1,90.7,Keto,None
+P181,5.01000023,Haifa,21,female,154.9,99.8,Vegan,None
+P182,3.61999989,Haifa,45,male,175.3,86.2,Keto,None
+P183,4.65999985,Haifa,53,female,160,82.6,Vegan,None
+P184,3.75,Haifa,53,female,162.6,81.2,Vegan,Once a week
+P185,4.55000019,Haifa,37,female,170.2,96.2,Vegan,Twice a week
+P186,4.92000008,Haifa,34,female,152.4,74.8,No restriction,More then twice a week
+P187,5.57999992,Haifa,74,male,175.3,83.5,No restriction,More then twice a week
+P188,3.98000002,Haifa,36,female,180.3,83,No restriction,More then twice a week
+P189,4.26999998,Haifa,40,female,132.1,84.8,Keto,Once a week
+P19,4.51999998,Tel-Aviv,43,female,157.5,65.8,No restriction,None
+P190,10.8999996,Tel-Aviv,60,male,170.2,88.9,No restriction,Once a week
+P191,NA,Tel-Aviv,49,female,160,58.1,Vegan,None
+P192,3.96000004,Tel-Aviv,29,female,165.1,55.8,Keto,None
+P193,4.30999994,Tel-Aviv,29,female,157.5,44.9,No restriction,Once a week
+P194,4.75,Tel-Aviv,23,female,165.1,83,No restriction,None
+P195,5.3499999,Haifa,40,male,182.9,122.5,No restriction,Twice a week
+P196,4.80000019,Haifa,38,female,152.4,62.6,No restriction,More then twice a week
+P197,4.80999994,Haifa,40,female,160,129.3,Keto,More then twice a week
+P198,4.86999989,Tel-Aviv,50,male,180.3,77.1,Keto,None
+P199,4.88000011,Haifa,29,male,172.7,81.6,Vegan,More then twice a week
+P2,3.94000006,Tel-Aviv,37,male,149.9,68,No restriction,None
+P20,4.67000008,Haifa,36,male,175.3,83,Keto,Once a week
+P200,5.05000019,Haifa,78,female,160,72.6,Keto,None
+P201,4.67000008,Tel-Aviv,23,female,154.9,83.9,Keto,None
+P202,5.03000021,Haifa,60,female,154.9,58.1,Keto,Twice a week
+P203,4.4000001,Haifa,40,female,157.5,69.4,Vegan,None
+P204,5.23999977,Haifa,63,female,162.6,101.2,Vegan,None
+P205,4.67000008,Haifa,30,female,157.5,56.7,Vegan,None
+P206,4.21000004,Haifa,21,male,175.3,70.3,Vegan,Once a week
+P207,6.05999994,Haifa,64,male,172.7,103,No restriction,None
+P208,10.75,Haifa,56,male,175.3,72.1,No restriction,None
+P209,3.69000006,Haifa,22,female,160,51.7,Keto,Twice a week
+P21,4.36999989,Haifa,40,male,177.8,85.7,No restriction,None
+P210,4.69000006,Haifa,35,male,188,77.1,No restriction,None
+P211,5.63000011,Haifa,59,female,167.6,62.6,No restriction,Once a week
+P212,4.4000001,Haifa,43,male,170.2,98,No restriction,None
+P213,3.8499999,Haifa,43,female,162.6,108.4,Vegan,More then twice a week
+P214,4.61000013,Haifa,63,male,177.8,73,No restriction,None
+P215,5.01000023,Haifa,46,female,160,81.2,No restriction,None
+P216,4.09000015,Haifa,26,female,157.5,78.9,No restriction,More then twice a week
+P217,4.0999999,Haifa,41,female,165.1,85.3,No restriction,More then twice a week
+P218,9.27999973,Haifa,43,female,165.1,89.8,No restriction,None
+P219,3.88000011,Haifa,20,female,162.6,51.7,No restriction,None
+P22,4.53000021,Haifa,20,male,170.2,72.1,Keto,Twice a week
+P220,5.69999981,Haifa,28,female,172.7,102.1,Keto,None
+P221,2.8499999,Haifa,30,female,160,64.9,Vegan,Once a week
+P222,3.97000003,Haifa,20,female,177.8,64,Keto,Twice a week
+P223,3.02999997,Haifa,32,female,165.1,68.5,Keto,None
+P224,5.51000023,Haifa,38,female,162.6,112.5,Keto,None
+P225,5.67999983,Haifa,61,male,188,68.9,Keto,Once a week
+P226,9.61999989,Haifa,72,male,177.8,81.6,Vegan,None
+P227,4.19999981,Haifa,26,female,152.4,59,Keto,None
+P228,4.53999996,Haifa,21,male,180.3,73.9,Vegan,None
+P229,3.58999991,Tel-Aviv,63,male,175.3,76.7,No restriction,More then twice a week
+P23,5.28000021,Haifa,36,male,162.6,57.2,Vegan,None
+P230,8.22999954,Tel-Aviv,65,male,177.8,82.1,No restriction,More then twice a week
+P231,9.1,Tel-Aviv,28,male,167.6,94.8,No restriction,More then twice a week
+P232,7.51000023,Haifa,36,male,167.6,81.2,Vegan,None
+P233,5.76999998,Haifa,66,female,162.6,59,Vegan,None
+P234,4.55999994,Haifa,34,female,NA,72.6,No restriction,None
+P235,2.8499999,Haifa,45,male,167.6,52.2,No restriction,None
+P236,5.34000015,Haifa,44,female,157.5,72.1,No restriction,Once a week
+P237,4.94999981,Haifa,27,male,182.9,64,No restriction,Twice a week
+P238,7.5,Tel-Aviv,41,male,180.3,95.3,No restriction,None
+P239,3.99000001,Tel-Aviv,38,female,NA,56.7,Vegan,None
+P24,11.2399998,Tel-Aviv,62,female,165.1,88.9,No restriction,None
+P240,NA,Tel-Aviv,31,male,177.8,74.8,No restriction,None
+P241,4.26999998,Tel-Aviv,28,female,162.6,57.2,No restriction,Once a week
+P242,4.25,Tel-Aviv,22,female,157.5,62.1,No restriction,Twice a week
+P243,5.57000017,Tel-Aviv,55,female,167.6,99.3,Keto,None
+P244,4.55999994,Tel-Aviv,45,female,162.6,75.7,Vegan,None
+P245,4.25,Tel-Aviv,76,male,165.1,69.9,Vegan,None
+P246,5.3499999,Tel-Aviv,43,female,162.6,82.1,Vegan,None
+P247,6.32999992,Tel-Aviv,65,female,154.9,84.8,Vegan,None
+P248,9.39000034,Tel-Aviv,70,female,152.4,99.8,No restriction,None
+P249,6.3499999,Tel-Aviv,20,female,172.7,124.3,No restriction,None
+P25,4.86000013,Tel-Aviv,43,female,162.6,147.4,Vegan,Twice a week
+P250,5.19999981,Tel-Aviv,62,male,172.7,81.6,No restriction,Once a week
+P251,4.98000002,Tel-Aviv,92,female,157.5,98.4,No restriction,Twice a week
+P252,14.3100004,Tel-Aviv,51,female,177.8,106.6,No restriction,None
+P253,13.6999998,Tel-Aviv,49,female,157.5,85.7,No restriction,Twice a week
+P254,NA,Tel-Aviv,44,female,167.6,86.6,No restriction,Once a week
+P255,10.9300003,Tel-Aviv,74,female,160,83,No restriction,More then twice a week
+P256,11.4099998,Tel-Aviv,71,female,160,74.8,No restriction,None
+P257,4.44000006,Tel-Aviv,76,female,154.9,46.3,Keto,None
+P258,8.39999962,Tel-Aviv,91,female,154.9,57.6,Vegan,Once a week
+P259,4.59000015,Tel-Aviv,40,male,180.3,97.1,Keto,None
+P26,4.40999985,Tel-Aviv,48,female,160,54.9,No restriction,None
+P260,5.23000002,Tel-Aviv,23,female,175.3,111.1,Keto,None
+P261,5.19999981,Tel-Aviv,40,female,172.7,119.7,Keto,None
+P262,6.11000013,Tel-Aviv,52,male,190.5,64.4,Keto,None
+P263,4.38999987,Tel-Aviv,20,female,162.6,73,Keto,None
+P264,5.55999994,Haifa,60,female,160,54.9,No restriction,None
+P265,4.98000002,Haifa,58,male,177.8,95.7,No restriction,None
+P266,4.65999985,Haifa,35,male,182.9,85.7,No restriction,Once a week
+P267,4.44999981,Haifa,43,female,142.2,54.4,No restriction,None
+P268,4.28999996,Haifa,52,male,177.8,54.4,No restriction,Twice a week
+P269,11.4099998,Haifa,59,male,172.7,76.7,No restriction,Once a week
+P27,6.13000011,Tel-Aviv,56,male,188,68.5,No restriction,None
+P270,4.07000017,Haifa,33,female,157.5,84.4,Keto,None
+P271,5.01000023,Haifa,37,male,177.8,118.8,Vegan,None
+P272,4.48000002,Haifa,40,male,182.9,100.7,No restriction,None
+P273,4.6500001,Haifa,38,female,170.2,100.7,No restriction,None
+P274,4.05000019,Haifa,32,female,157.5,81.2,No restriction,None
+P275,4.38000011,Haifa,51,male,165.1,66.2,Keto,More then twice a week
+P276,4.82000017,Haifa,25,female,152.4,69.9,Keto,More then twice a week
+P277,4.13000011,Haifa,30,male,182.9,74.8,No restriction,None
+P278,3.57999992,Haifa,42,male,167.6,83.9,Keto,None
+P279,9.36999989,Haifa,52,female,157.5,66.7,Vegan,Once a week
+P28,6.48999977,Tel-Aviv,55,female,170.2,101.2,No restriction,Once a week
+P280,4.96000004,Haifa,78,male,167.6,65.8,Keto,More then twice a week
+P281,5.53000021,Haifa,59,female,157.5,80.3,Keto,Twice a week
+P282,13.6300001,Haifa,29,female,175.3,92,No restriction,Once a week
+P283,4.98999977,Haifa,37,male,167.6,61.7,Keto,None
+P284,16.1100006,Haifa,53,male,175.3,110,No restriction,None
+P285,4.38999987,Haifa,51,female,160,69.9,Vegan,None
+P286,4.48999977,Haifa,41,female,160,89.4,Vegan,Twice a week
+P287,17.12,Haifa,68,female,162.6,99.8,No restriction,None
+P288,7.44000006,Tel-Aviv,76,female,152.4,64.9,Vegan,None
+P289,3.97000003,Haifa,35,male,185.4,81.2,No restriction,None
+P29,7.51000023,Tel-Aviv,49,male,180.3,120.7,No restriction,None
+P290,4.6500001,Haifa,50,female,162.6,103.4,No restriction,None
+P291,4.03999996,Haifa,37,female,149.9,67.1,Vegan,More then twice a week
+P292,4.67999983,Haifa,20,female,147.3,77.1,Vegan,None
+P293,4.17000008,Haifa,44,male,172.7,71.2,No restriction,None
+P294,4.88000011,Haifa,52,male,175.3,69.4,No restriction,Once a week
+P295,4.92999983,Haifa,42,female,170.2,106.6,Keto,Twice a week
+P296,4.82999992,Haifa,27,male,175.3,131.1,No restriction,None
+P297,10.0699997,Haifa,84,female,152.4,87.1,Keto,None
+P298,3.66000009,Haifa,20,female,170.2,84.8,Keto,None
+P299,6.48000002,Haifa,80,male,180.3,96.2,Keto,None
+P3,4.84000015,Tel-Aviv,45,male,175.3,76,Keto,None
+P30,4.67000008,Tel-Aviv,47,male,170.2,104.3,Vegan,Once a week
+P300,11.1800003,Haifa,80,female,157.5,96,No restriction,Once a week
+P301,5.15999985,Haifa,39,male,152.4,65.3,Vegan,None
+P302,6.78000021,Haifa,73,male,165.1,83,No restriction,None
+P303,12.1599998,Haifa,53,male,175.3,98,No restriction,Once a week
+P304,4.28000021,Haifa,49,male,170.2,82.1,No restriction,None
+P305,4.15999985,Haifa,55,female,167.6,91.6,No restriction,None
+P306,5.21999979,Haifa,37,female,162.6,72.6,Keto,None
+P307,14.9399996,Haifa,60,female,149.9,88,No restriction,None
+P308,4.32999992,Haifa,29,female,162.6,54.4,Keto,Twice a week
+P309,3.75,Haifa,43,female,167.6,68.9,Vegan,More then twice a week
+P31,4.61000013,Tel-Aviv,24,female,154.9,51.3,Vegan,None
+P310,4.96999979,Haifa,63,female,147.3,95.3,Vegan,More then twice a week
+P311,4.65999985,Tel-Aviv,32,male,177.8,96.2,No restriction,Twice a week
+P312,4.21999979,Haifa,26,male,182.9,103,No restriction,None
+P313,5.17000008,Haifa,36,male,175.3,68,No restriction,None
+P314,5.17000008,Haifa,31,female,170.2,90.7,Vegan,None
+P315,3.75999999,Haifa,53,female,162.6,78.9,No restriction,Once a week
+P316,NA,Tel-Aviv,68,male,177.8,77.1,No restriction,Once a week
+P317,5.71000004,Haifa,83,female,149.9,56.7,No restriction,None
+P318,4.30999994,Haifa,19,female,154.9,54,Keto,None
+P319,7.86999989,Tel-Aviv,79,male,177.8,74.8,No restriction,None
+P32,6.96999979,Haifa,58,male,170.2,80.3,No restriction,None
+P320,4.61000013,Tel-Aviv,63,male,185.4,79.4,Vegan,None
+P321,NA,Tel-Aviv,58,female,160,104.3,No restriction,None
+P322,NA,Tel-Aviv,53,female,160,71.7,No restriction,None
+P323,5.3499999,Tel-Aviv,50,male,177.8,119.3,No restriction,None
+P324,4.36000013,Tel-Aviv,41,male,180.3,70.8,No restriction,None
+P325,8.44999981,Haifa,59,female,170.2,78,Vegan,Once a week
+P326,4.40999985,Haifa,48,male,177.8,54.4,Keto,None
+P327,3.98000002,Haifa,34,male,182.9,77.1,Keto,Twice a week
+P328,9.76000023,Haifa,63,female,160,71.7,Keto,More then twice a week
+P329,6.96000004,Tel-Aviv,58,female,160,69.9,No restriction,More then twice a week
+P33,4.9000001,Haifa,33,female,160,77.1,No restriction,None
+P330,4.84000015,Tel-Aviv,34,male,185.4,99.3,No restriction,Once a week
+P331,4.28999996,Tel-Aviv,48,male,177.8,78.5,Vegan,Once a week
+P332,5.46999979,Tel-Aviv,46,female,157.5,83,Vegan,None
+P333,3.93000007,Tel-Aviv,22,female,180.3,101.2,Vegan,Twice a week
+P334,4.0999999,Haifa,21,female,160,64.4,Vegan,None
+P335,4.78999996,Haifa,41,female,149.9,63,Keto,None
+P336,7.78999996,Haifa,47,female,160,70.8,Keto,None
+P337,5.1500001,Haifa,61,female,165.1,99.8,Keto,None
+P338,5.51999998,Haifa,40,male,185.4,90.7,No restriction,None
+P339,5.17999983,Haifa,61,female,170.2,76.7,No restriction,Once a week
+P34,4.57999992,Tel-Aviv,66,female,167.6,54.9,Keto,None
+P340,5.28000021,Haifa,53,female,154.9,65.8,No restriction,None
+P341,4.38000011,Haifa,28,female,162.6,90.7,No restriction,None
+P342,4.82000017,Haifa,67,male,170.2,80.7,No restriction,Once a week
+P343,4.86000013,Haifa,49,female,157.5,93,Vegan,None
+P344,10.5500002,Haifa,51,female,NA,97.5,Keto,Twice a week
+P345,4.86000013,Haifa,65,female,157.5,68.5,No restriction,None
+P346,4.11000013,Haifa,54,male,167.6,77.1,No restriction,Once a week
+P347,9.17000008,Haifa,64,female,160,72.1,No restriction,None
+P348,5.11000013,Haifa,41,female,154.9,49.9,Keto,None
+P349,5.01999998,Haifa,38,male,172.7,76.7,No restriction,None
+P35,4.80999994,Tel-Aviv,48,female,172.7,66.2,No restriction,None
+P350,10.1499996,Haifa,65,male,170.2,89.4,Keto,Once a week
+P351,4.17000008,Haifa,28,female,160,90.7,Keto,Twice a week
+P352,4.05000019,Haifa,41,male,175.3,69.9,Vegan,Once a week
+P353,5.44000006,Haifa,37,female,154.9,92.1,Vegan,Once a week
+P354,4.30999994,Haifa,50,male,180.3,81.6,Vegan,More then twice a week
+P36,9.18000031,Tel-Aviv,59,male,167.6,77.1,Vegan,None
+P37,5.23000002,Tel-Aviv,76,male,162.6,47.6,No restriction,Twice a week
+P38,5.46000004,Tel-Aviv,45,female,170.2,68.5,No restriction,None
+P39,4.03999996,Tel-Aviv,52,male,180.3,72.1,No restriction,Once a week
+P4,6.38999987,Tel-Aviv,71,female,160,110.7,Keto,None
+P40,4.17999983,Tel-Aviv,41,female,182.9,53.5,No restriction,None
+P41,5.36999989,Tel-Aviv,41,female,157.5,72.6,No restriction,More then twice a week
+P42,4.51000023,Tel-Aviv,20,male,182.9,65.8,Keto,None
+P43,4.03000021,Tel-Aviv,47,female,167.6,84.4,No restriction,More then twice a week
+P44,2.68000007,Tel-Aviv,35,male,167.6,72.1,No restriction,None
+P45,3.55999994,Tel-Aviv,46,male,182.9,93,No restriction,None
+P46,7.90999985,Tel-Aviv,70,male,175.3,97.1,No restriction,None
+P47,4.57999992,Tel-Aviv,22,female,167.6,72.6,Keto,None
+P48,5.11000013,Tel-Aviv,42,female,165.1,78.9,No restriction,None
+P49,3.8900001,Tel-Aviv,52,female,157.5,77.1,Vegan,Once a week
+P5,5.78000021,Tel-Aviv,55,female,160,91.6,Vegan,More then twice a week
+P50,4.46999979,Tel-Aviv,52,male,172.7,63,No restriction,None
+P51,4.38000011,Tel-Aviv,36,male,170.2,87.1,Keto,Twice a week
+P52,15.5200005,Tel-Aviv,61,male,188,120,No restriction,Once a week
+P53,5.65999985,Tel-Aviv,61,female,175.3,78.9,Keto,Twice a week
+P54,9.57999992,Tel-Aviv,50,male,180.3,145.1,Vegan,Once a week
+P55,5.55000019,Tel-Aviv,43,female,157.5,73.9,Keto,None
+P56,3.67000008,Tel-Aviv,25,male,167.6,53.5,Vegan,None
+P57,4.86999989,Haifa,35,male,175.3,76.7,Keto,None
+P58,5.5999999,Haifa,82,male,167.6,73.9,Keto,None
+P59,5.5999999,Tel-Aviv,47,female,165.1,105.2,Keto,Once a week
+P6,4.63999987,Tel-Aviv,58,female,156.2,116.1,Keto,None
+P60,12.9700003,Tel-Aviv,75,male,172.7,95.3,No restriction,Twice a week
+P61,4.5,Tel-Aviv,31,female,157.5,65.8,Vegan,None
+P62,5.63000011,Tel-Aviv,62,male,193,72.6,Vegan,None
+P63,13.6000004,Haifa,58,male,175.3,85,No restriction,None
+P64,4.57000017,Haifa,81,female,162.6,71.7,No restriction,None
+P65,4.65999985,Haifa,27,female,165.1,95.3,No restriction,None
+P66,4.71000004,Haifa,47,female,162.6,55.8,No restriction,None
+P67,6.13999987,Tel-Aviv,54,female,170.2,74.8,Keto,None
+P68,5.96000004,Tel-Aviv,72,female,149.9,62.1,Keto,None
+P69,4.03000021,Haifa,39,female,167.6,115.7,Vegan,None
+P7,4.01000023,Tel-Aviv,21,female,165.1,76.7,Keto,Once a week
+P70,5.55999994,Haifa,50,male,177.8,97.5,Vegan,Once a week
+P71,9.25,Tel-Aviv,67,male,172.7,75.7,No restriction,None
+P72,4.4000001,Tel-Aviv,33,female,167.6,53.5,No restriction,None
+P73,4.73999977,Tel-Aviv,42,female,190.5,84.4,No restriction,Once a week
+P74,4.4000001,Tel-Aviv,21,female,160,71.7,Keto,Twice a week
+P75,5.48999977,Tel-Aviv,51,female,165.1,65.8,Vegan,More then twice a week
+P76,11.5900002,Haifa,50,male,175.3,78,No restriction,None
+P77,3.44000006,Tel-Aviv,27,female,160,54,No restriction,More then twice a week
+P78,9.81999969,Haifa,51,female,170.2,127.9,No restriction,More then twice a week
+P79,4.96000004,Haifa,71,male,175.3,77.6,No restriction,None
+P8,7.53000021,Tel-Aviv,64,male,180.3,102.1,Vegan,None
+P80,4.40999985,Haifa,54,female,165.1,62.6,Keto,None
+P81,3.54999995,Tel-Aviv,40,female,157.5,47.6,No restriction,None
+P82,NA,Tel-Aviv,45,male,175.3,105.7,No restriction,None
+P83,4.73000002,Tel-Aviv,30,female,165.1,74.8,No restriction,None
+P84,4.44000006,Tel-Aviv,68,female,160,56.2,No restriction,Once a week
+P85,4.92000008,Tel-Aviv,82,female,160,77.1,Keto,Twice a week
+P86,4.59000015,Tel-Aviv,60,female,157.5,60.8,Vegan,None
+P87,12.0699997,Tel-Aviv,55,male,190.5,84.4,No restriction,More then twice a week
+P88,12.6700001,Tel-Aviv,63,female,165.1,91.2,No restriction,More then twice a week
+P89,5.13999987,Tel-Aviv,41,male,170.2,86.6,No restriction,Once a week
+P9,4.82999992,Tel-Aviv,23,male,193,97.3,Keto,None
+P90,4.17000008,Tel-Aviv,26,male,185.4,78.9,No restriction,More then twice a week
+P91,5.40999985,Tel-Aviv,47,male,172.7,64.4,No restriction,None
+P92,4.75,Tel-Aviv,36,female,162.6,61.7,No restriction,None
+P93,4.86999989,Tel-Aviv,72,female,154.9,81.6,No restriction,None
+P94,5.3499999,Haifa,58,male,167.6,97.5,Keto,None
+P95,4.69000006,Haifa,72,male,165.1,75.7,Keto,Once a week
+P96,4.21000004,Haifa,75,male,175.3,92.5,Vegan,None
+P97,4.73000002,Haifa,23,male,182.9,81.6,Keto,None
+P98,4.51999998,Haifa,42,female,165.1,74.8,Vegan,None
+P99,4.94999981,Haifa,43,male,180.3,81.2,Vegan,None
