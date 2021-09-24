@@ -1,10 +1,14 @@
-library(matrixStats)
+library("matrixStats")
 library(ggplot2)
+install.packages("matrixStats")
 
-df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
+df_counts <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
+df_metadata <- read.table("GSE119290_series_matrix.txt")
+matrix_df_counts <- matrix(as.numeric(unlist(df_counts)),nrow=nrow(df_counts))
+matrix_df_counts
+matrix_df_metadata <- matrix(as.character(unlist(df_metadata)),nrow=nrow(df_metadata))
+matrix_df_metadata 
 
-matrixDF <- matrix(as.numeric(unlist(df)),nrow=nrow(df))
-matrixDF
 r <- rowRanges(matrixDF, rows = NULL, cols = NULL, na.rm = FALSE, dim. = dim(matrixDF), useNames = NA)
 
 ranges <- 0
