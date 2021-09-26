@@ -15,8 +15,8 @@ library(matrixStats)
 library(ggplot2)
 library(DESeq2)
 
-cts <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
-coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
+cts <- as.matrix(read.table("C:/Users/doron/source/semesterE-UF/Bioinformatics/bioinformatics/GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
+coldata<-read.csv("C:/Users/doron/source/semesterE-UF/Bioinformatics/bioinformatics/coldata.csv",header = T,row.names=1,stringsAsFactors=T)
 coldata
 
 dds <- DESeqDataSetFromMatrix(countData = cts,colData = coldata,design = ~ dex)
@@ -51,6 +51,30 @@ volcano_plot <- EnhancedVolcano::EnhancedVolcano(
   y = "padj",pCutoff = 0.01 )
 
 volcano_plot
+
+vst <- vst(dds,blind = FALSE)
+head(assay(vsd), 3)
+
+sampleDists <- dist(t(assay(vst)))
+sampleDists
+install.packages("pheatmap")
+library ("pheatmap")
+library ("RColorBrewer")
+
+sampleDistMatrix <- as.matrix( sampleDists )
+rownames(sampleDistMatrix) <- paste( vst$dex, sep = " - " )
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+
+pheatmap(sampleDistMatrix,clustering_distance_rows = sampleDists,
+         clustering_distance_cols = sampleDists,col = colors)
+
+topVarGenes <- head(order(rowVars(assay(vst)), decreasing = TRUE), 20)
+topVarGenes
+mat  <- assay(vst)[topVarGenes, ]
+mat<-mat-rowMeans(mat)
+anno <- as.data.frame(colData(vst)[c("dex")])
+pheatmap(mat, annotation_col = anno)
 
 #df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
 #df_counts <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
