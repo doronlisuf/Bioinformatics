@@ -2,6 +2,7 @@ library("matrixStats")
 library(ggplot2)
 library(DESeq2)
 
+
 df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
 df_counts <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
 df_metadata <- read.table("GSE119290_series_matrix.txt")
@@ -20,3 +21,11 @@ for(i in 1:26364) {
 }
 
 plot(density(vector_of_ranges), log='x')
+
+cts <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
+coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
+coldata
+
+dds <- DESeqDataSetFromMatrix(countData = cts,colData = coldata,design = ~ dex)
+vsd <- vst(dds, blind=FALSE)
+plotPCA(vsd, intgroup=c("dex"))
