@@ -9,7 +9,19 @@ if (!("EnhancedVolcano" %in% installed.packages())) {
 if (!("apeglm" %in% installed.packages())) {
   BiocManager::install("apeglm", update = FALSE)
 }
-
+if (!("pheatmap" %in% installed.packages())) {
+  BiocManager::install("apeglm", update = FALSE)
+}
+if (!("gprofiler2" %in% installed.packages())) {
+  BiocManager::install("apeglm", update = FALSE)
+}
+if (!("clusterProfiler" %in% installed.packages())) {
+  BiocManager::install("apeglm", update = FALSE)
+}
+library(clusterProfiler)
+library(gprofiler2)
+library ("pheatmap")
+library ("RColorBrewer")
 library(magrittr)
 library(matrixStats)
 library(ggplot2)
@@ -53,13 +65,11 @@ volcano_plot <- EnhancedVolcano::EnhancedVolcano(
 volcano_plot
 
 vst <- vst(dds,blind = FALSE)
-head(assay(vsd), 3)
+head(assay(vst), 3)
 
 sampleDists <- dist(t(assay(vst)))
 sampleDists
-install.packages("pheatmap")
-library ("pheatmap")
-library ("RColorBrewer")
+
 
 sampleDistMatrix <- as.matrix( sampleDists )
 rownames(sampleDistMatrix) <- paste( vst$dex, sep = " - " )
@@ -72,19 +82,34 @@ pheatmap(sampleDistMatrix,clustering_distance_rows = sampleDists,
 topVarGenes <- head(order(rowVars(assay(vst)), decreasing = TRUE), 20)
 topVarGenes
 mat  <- assay(vst)[topVarGenes, ]
+
 mat<-mat-rowMeans(mat)
 anno <- as.data.frame(colData(vst)[c("dex")])
 pheatmap(mat, annotation_col = anno)
 
-#df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
-#df_counts <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
-#df_metadata <- read.table("GSE119290_series_matrix.txt")
-#matrix_df_counts <- matrix(as.numeric(unlist(df_counts)),nrow=nrow(df_counts))
-#matrix_df_counts
-#matrix_df_metadata <- matrix(as.character(unlist(df_metadata)),nrow=nrow(df_metadata))
-#matrix_df_metadata 
+topVarGenesGO <- head(order(rowVars(assay(vst)), decreasing = TRUE), 100)
+topVarGenesGO
+mat_100  <- assay(vst)[topVarGenesGO, ]
 
-#matrix_of_data <- matrix(as.numeric(unlist(df)),nrow=nrow(df))
+gostres <- gost(query = rownames(mat_100), 
+                organism = "hsapiens", ordered_query = FALSE, 
+                multi_query = FALSE, significant = TRUE, exclude_iea = FALSE, 
+                measure_underrepresentation = FALSE, evcodes = FALSE, 
+                user_threshold = 0.05, correction_method = "g_SCS", 
+                domain_scope = "annotated", custom_bg = NULL, 
+                numeric_ns = "", sources = NULL, as_short_link = FALSE)
+
+names(gostres)
+head(gostres$result, 6)
+names(gostres$meta)
+gostplot(gostres, capped = TRUE, interactive = TRUE)
+plot <- gostplot(gostres, capped = FALSE, interactive = FALSE)
+plot
+publish_gosttable(gostres, highlight_terms = gostres$result[c(1:2,10,120),],
+                  use_colors = TRUE, 
+                  show_columns = c("source", "term_name", "term_size", "intersection_size"),
+                  filename = NULL)
+
 matrix_of_data <- cts
 matrix_of_ranges <- rowRanges(matrix_of_data, rows = NULL, cols = NULL, na.rm = FALSE, dim. = dim(matrix_of_data), useNames = NA)
 
