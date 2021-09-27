@@ -3,16 +3,121 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE119290
 
 ```{r}
-plot(cars)
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+if (!("DESeq2" %in% installed.packages())) {
+  BiocManager::install("DESeq2", update = FALSE)
+}
+if (!("EnhancedVolcano" %in% installed.packages())) {
+  BiocManager::install("EnhancedVolcano", update = FALSE)
+}
+if (!("apeglm" %in% installed.packages())) {
+  BiocManager::install("apeglm", update = FALSE)
+}
+BiocManager::install("DESeq2", update = TRUE)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
+library(matrixStats)
+library(ggplot2)
+library(DESeq2)
+library(magrittr)
+library(ggplot2)
+library(umap)
+library(data.table)
+```
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+
+Data
+
+
+```{r}
+df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
+df_counts <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
+df_metadata <- read.table("GSE119290_series_matrix.txt")
+matrix_df_counts <- matrix(as.numeric(unlist(df_counts)),nrow=nrow(df_counts))
+matrix_df_metadata <- matrix(as.character(unlist(df_metadata)),nrow=nrow(df_metadata))
+
+matrix_of_data <- matrix(as.numeric(unlist(df)),nrow=nrow(df))
+
+matrix_of_ranges <- rowRanges(matrix_of_data, rows = NULL, cols = NULL, na.rm = FALSE, dim. = dim(matrix_of_data), useNames = NA)
+
+vector_of_ranges <- 0
+for(i in 1:26364) {
+  vector_of_ranges[i] <- matrix_of_ranges[i,2]-matrix_of_ranges[i,1]
+}
+
+plot(density(vector_of_ranges), log='x')
+```
+
+PCA
+
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = cts,colData = coldata,design = ~ dex)
+vsd <- vst(dds, blind=FALSE)
+plotPCA(vsd, intgroup=c("dex"))
+```
+
+UMAP
+
+```{r}
+df <- transpose(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
+df.umap = umap(df)
+coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
+
+dimension1 <- range(df.umap$layout)
+dimension2 <- dimension1
+plot(dimension1, dimension2, type="n")
+points(df.umap$layout[,1], df.umap$layout[,2], col=as.integer(coldata[,"dex"])+2, cex=2, pch=20)
+labels.u = unique(coldata[,"dex"])
+legend.text = as.character(labels.u)
+legend.pos = "bottomleft"
+legend.text = paste(as.character(labels.u), "")
+ 
+legend(legend.pos, legend=legend.text, inset=0.03,col=as.integer(labels.u)+2,bty="n", pch=20, cex=1)
+```
+
+Summary for PCA/UMAP
+
+
+Volcano plot
+
+```{r}
+#volcano plot here
+```
+
+Summary of volcano plot
+
+
+Heatmap
+
+```{r}
+#heatmap
+```
+
+Method/Ontology 1
+```{r}
+#Method 2 code
+```
+
+summary of Method/Ontology 1
+
+Method/Ontology 2
+```{r}
+#Method 2 code
+```
+
+summary of Method/Ontology 2
+
+Method/Ontology 3
+```{r}
+#Method 3 code
+```
+
+summary of Method/Ontology 3
