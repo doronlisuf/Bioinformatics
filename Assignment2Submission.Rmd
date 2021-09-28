@@ -130,6 +130,7 @@ deseq_df <- deseq_results %>%
   # higher expression in RPL10 mutated samples
   dplyr::arrange(dplyr::desc(log2FoldChange))
 head(deseq_df)
+plotCounts(dds, gene = "DDX11L1", intgroup = "dex")
 ```
 
 
@@ -137,6 +138,11 @@ Volcano plot
 
 ```{r}
 #volcano plot here
+volcano_plot <- EnhancedVolcano::EnhancedVolcano(
+  deseq_df,lab = deseq_df$Gene,x = "log2FoldChange",
+  y = "padj",pCutoff = 0.01 )
+
+volcano_plot
 ```
 
 Summary of volcano plot
@@ -146,11 +152,56 @@ Heatmap
 
 ```{r}
 #heatmap
+vst <- vst(dds,blind = FALSE)
+
+sampleDists <- dist(t(assay(vst)))
+sampleDists
+
+
+sampleDistMatrix <- as.matrix( sampleDists )
+rownames(sampleDistMatrix) <- paste( vst$dex, sep = " - " )
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+
+pheatmap(sampleDistMatrix,clustering_distance_rows = sampleDists,
+         clustering_distance_cols = sampleDists,col = colors)
+
+topVarGenes <- head(order(rowVars(assay(vst)), decreasing = TRUE), 20)
+topVarGenes
+mat  <- assay(vst)[topVarGenes, ]
+
+mat<-mat-rowMeans(mat)
+anno <- as.data.frame(colData(vst)[c("dex")])
+pheatmap(mat, annotation_col = anno)
 ```
 
 Method/Ontology 1
 ```{r}
-#Method 2 code
+#Method 1 code
+topVarGenesGO <- head(order(rowVars(assay(vst)), decreasing = TRUE), 100)
+topVarGenesGO
+mat_100  <- assay(vst)[topVarGenesGO, ]
+
+gostres <- gost(query = rownames(mat_100), 
+                organism = "hsapiens", ordered_query = FALSE, 
+                multi_query = FALSE, significant = TRUE, exclude_iea = FALSE, 
+                measure_underrepresentation = FALSE, evcodes = FALSE, 
+                user_threshold = 0.05, correction_method = "g_SCS", 
+                domain_scope = "annotated", custom_bg = NULL, 
+                numeric_ns = "", sources = NULL, as_short_link = FALSE)
+
+names(gostres)
+head(gostres$result, 6)
+names(gostres$meta)
+gostplot(gostres, capped = TRUE, interactive = TRUE)
+plot <- gostplot(gostres, capped = FALSE, interactive = FALSE)
+plot
+publish_gosttable(gostres, highlight_terms = gostres$result[c(1:2,10,120),],
+                  use_colors = TRUE, 
+                  show_columns = c("source", "term_name", "term_size", "intersection_size"),
+                  filename = NULL)
+
+
 ```
 
 summary of Method/Ontology 1
