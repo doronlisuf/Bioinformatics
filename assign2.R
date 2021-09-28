@@ -10,13 +10,13 @@ if (!("apeglm" %in% installed.packages())) {
   BiocManager::install("apeglm", update = FALSE)
 }
 if (!("pheatmap" %in% installed.packages())) {
-  BiocManager::install("apeglm", update = FALSE)
+  BiocManager::install("pheatmap", update = FALSE)
 }
 if (!("gprofiler2" %in% installed.packages())) {
-  BiocManager::install("apeglm", update = FALSE)
+  BiocManager::install("gprofiler2", update = FALSE)
 }
 if (!("clusterProfiler" %in% installed.packages())) {
-  BiocManager::install("apeglm", update = FALSE)
+  BiocManager::install("clusterProfiler", update = FALSE)
 }
 if (!("M3C" %in% installed.packages())) {
   BiocManager::install("M3C", update = FALSE)

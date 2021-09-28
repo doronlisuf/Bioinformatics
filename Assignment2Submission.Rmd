@@ -17,39 +17,58 @@ if (!("EnhancedVolcano" %in% installed.packages())) {
 if (!("apeglm" %in% installed.packages())) {
   BiocManager::install("apeglm", update = FALSE)
 }
-BiocManager::install("DESeq2", update = TRUE)
+if (!("pheatmap" %in% installed.packages())) {
+  BiocManager::install("pheatmap", update = FALSE)
+}
+if (!("gprofiler2" %in% installed.packages())) {
+  BiocManager::install("gprofiler2", update = FALSE)
+}
+if (!("clusterProfiler" %in% installed.packages())) {
+  BiocManager::install("clusterProfiler", update = FALSE)
+}
+if (!("M3C" %in% installed.packages())) {
+  BiocManager::install("M3C", update = FALSE)
+}
 ```
 
 
 ```{r}
+library(M3C)
+library(umap)
+library(Rtsne)
+#library(data.table)
+library(clusterProfiler)
+library(gprofiler2)
+library ("pheatmap")
+library ("RColorBrewer")
+library(magrittr)
 library(matrixStats)
 library(ggplot2)
 library(DESeq2)
-library(magrittr)
-library(umap)
-library(data.table)
 ```
 
 
 
-Data
+```{r}
+###### Load the data into R.######
+matrix_of_data <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
+coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
+```
+
 
 
 ```{r}
-df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
-df_counts <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
-df_metadata <- read.table("GSE119290_series_matrix.txt")
-matrix_df_counts <- matrix(as.numeric(unlist(df_counts)),nrow=nrow(df_counts))
-matrix_df_metadata <- matrix(as.character(unlist(df_metadata)),nrow=nrow(df_metadata))
-
-matrix_of_data <- matrix(as.numeric(unlist(df)),nrow=nrow(df))
-
+##### calculate per-gene expression ranges and generating a density plot #####
 matrix_of_ranges <- rowRanges(matrix_of_data, rows = NULL, cols = NULL, na.rm = FALSE, dim. = dim(matrix_of_data), useNames = NA)
 
 vector_of_ranges <- 0
 for(i in 1:26364) {
   vector_of_ranges[i] <- matrix_of_ranges[i,2]-matrix_of_ranges[i,1]
 }
+vector_of_ranges
+hist(vector_of_ranges)
+d <- density(vector_of_ranges) # returns the density data
+plot(d)
 
 plot(density(vector_of_ranges), log='x')
 ```
@@ -58,19 +77,24 @@ PCA
 
 
 ```{r}
-cts <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
-coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
-dds <- DESeqDataSetFromMatrix(countData = cts,colData = coldata,design = ~ dex)
-vsd <- vst(dds, blind=FALSE)
-plotPCA(vsd, intgroup=c("dex"))
+##### generate a PCA plot #######
+dds <- DESeqDataSetFromMatrix(countData = matrix_of_data,colData = coldata,design = ~ dex)
+dds        
+head(assay(dds))
+
+nrow(dds)
+dds <- dds[rowSums(counts(dds)) > 1,]
+nrow(dds)
+
+vst <- vst(dds,blind = FALSE)
+plotPCA(vst, intgroup=c("dex"))
 ```
 
 UMAP
 
 ```{r}
-df <- transpose(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
-df.umap = umap(df)
-coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
+matrix_of_data_t <- t(matrix_of_data)
+df.umap = umap(matrix_of_data_t)
 
 dimension1 <- range(df.umap$layout)
 dimension2 <- dimension1
@@ -85,6 +109,28 @@ legend(legend.pos, legend=legend.text, inset=0.03,col=as.integer(labels.u)+2,bty
 ```
 
 Summary for PCA/UMAP
+
+
+```{r}
+#### Perform differential analysis on the samples from your two groups #####
+
+deseq_object <- DESeq(dds)
+deseq_results <- results(deseq_object)
+deseq_results <- lfcShrink(deseq_object,coef = 2, res = deseq_results )
+head(deseq_results)
+
+deseq_df <- deseq_results %>%
+  # make into data.frame
+  as.data.frame() %>%
+  # the gene names are row names -- let's make them a column for easy display
+  tibble::rownames_to_column("Gene") %>%
+  # add a column for significance threshold results
+  dplyr::mutate(threshold = padj < 0.05) %>%
+  # sort by statistic -- the highest values will be genes with
+  # higher expression in RPL10 mutated samples
+  dplyr::arrange(dplyr::desc(log2FoldChange))
+head(deseq_df)
+```
 
 
 Volcano plot
