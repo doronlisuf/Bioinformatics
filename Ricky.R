@@ -1,15 +1,17 @@
 library("matrixStats")
 library(ggplot2)
 library(DESeq2)
+library(DOSE)
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
 
+BiocManager::install('org.Hs.eg.db')
+
+BiocManager::install("mygene")
 
 df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
 df_counts <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
-df_metadata <- read.table("GSE119290_series_matrix.txt")
-matrix_df_counts <- matrix(as.numeric(unlist(df_counts)),nrow=nrow(df_counts))
-matrix_df_counts
-matrix_df_metadata <- matrix(as.character(unlist(df_metadata)),nrow=nrow(df_metadata))
-matrix_df_metadata 
+
 
 matrix_of_data <- matrix(as.numeric(unlist(df)),nrow=nrow(df))
 
@@ -29,3 +31,36 @@ coldata
 dds <- DESeqDataSetFromMatrix(countData = cts,colData = coldata,design = ~ dex)
 vsd <- vst(dds, blind=FALSE)
 plotPCA(vsd, intgroup=c("dex"))
+
+#get differentially expressed genes
+res <- results(DESeq(dds))
+#store values
+geneList = res[,2]
+#create list of genes
+names_list = rownames(res)
+
+library('org.Hs.eg.db')
+
+#lead gene names into symbols variable
+symbols <- rownames(res)
+#map symbols to IDs
+gene_ids <- mapIds(org.Hs.eg.db, symbols, 'ENTREZID', 'SYMBOL')
+
+#update ID's in list of gene names
+for(i in 1:26364){
+  names_list[i] = gene_ids[names_list[i]]
+}
+names(geneList) = names_list
+geneList = sort(geneList, decreasing = TRUE)
+gene <- names(geneList)[abs(geneList) > 1.5]
+x <- enrichDO(gene          = gene,
+              ont           = "DO",
+              pvalueCutoff  = 0.05,
+              pAdjustMethod = "BH",
+              universe      = names(geneList),
+              minGSSize     = 5,
+              maxGSSize     = 500,
+              qvalueCutoff  = 0.05,
+              readable      = TRUE)
+head(x)
+
