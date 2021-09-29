@@ -29,6 +29,7 @@ if (!("clusterProfiler" %in% installed.packages())) {
 if (!("M3C" %in% installed.packages())) {
   BiocManager::install("M3C", update = FALSE)
 }
+install.packages("knitr")
 ```
 
 
@@ -66,10 +67,6 @@ for(i in 1:26364) {
   vector_of_ranges[i] <- matrix_of_ranges[i,2]-matrix_of_ranges[i,1]
 }
 vector_of_ranges
-hist(vector_of_ranges)
-d <- density(vector_of_ranges) # returns the density data
-plot(d)
-
 plot(density(vector_of_ranges), log='x')
 ```
 
@@ -79,12 +76,7 @@ PCA
 ```{r}
 ##### generate a PCA plot #######
 dds <- DESeqDataSetFromMatrix(countData = matrix_of_data,colData = coldata,design = ~ dex)
-dds        
-head(assay(dds))
-
-nrow(dds)
 dds <- dds[rowSums(counts(dds)) > 1,]
-nrow(dds)
 
 vst <- vst(dds,blind = FALSE)
 plotPCA(vst, intgroup=c("dex"))
