@@ -8,6 +8,9 @@ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE119290
 ```{r}
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
+if (!requireNamespace("knitr", quietly = TRUE))
+    install.packages("knitr")
+BiocManager::install("clusterProfiler")
 if (!("DESeq2" %in% installed.packages())) {
   BiocManager::install("DESeq2", update = FALSE)
 }
@@ -29,7 +32,6 @@ if (!("clusterProfiler" %in% installed.packages())) {
 if (!("M3C" %in% installed.packages())) {
   BiocManager::install("M3C", update = FALSE)
 }
-install.packages("knitr")
 ```
 
 
