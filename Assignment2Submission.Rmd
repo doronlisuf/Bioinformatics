@@ -2,7 +2,8 @@
 title: "R Notebook"
 output: html_notebook
 ---
-
+Names: Leon Kwan, Doron lisiansky, Richard Clarke
+github repo: https://github.com/r-clarke/bioinformatics
 https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE119290
 
 ```{r}
@@ -125,8 +126,8 @@ deseq_df <- deseq_results %>%
 head(deseq_df)
 plotCounts(dds, gene = "DDX11L1", intgroup = "dex")
 ```
-we are performing differential expression analysis. In our DESeq2 object we designated ourdex variable which represent the group as the model argument. Because of this, the DESeq function will use groups defined by dex to test for differential expression.
-we will use lfcShrink inorder to decrease noise and preserve large differences between groups.we can see for example that The DDX11L1 gene samples have similar expression in both groups.
+We are performing differential expression analysis. In our DESeq2 object we designated our dex variable which represent the group as the model argument. Because of this, the DESeq function will use groups defined by dex to test for differential expression.
+We will use lfcShrink in order to decrease noise and preserve large differences between groups. We can see for example that The DDX11L1 gene samples have similar expression in both groups.
 
 Volcano plot
 
@@ -209,8 +210,8 @@ publish_gosttable(gostres, highlight_terms = gostres$result[c(1),],
 summary of Method/Ontology 1
 method :gprofiler2
 Ontology : Gene Ontology
-in this enrichment analysis we Extracted the list of the top 100 differentially expressed genes and run gost function.
-the function enables to perform functional profiling of gene lists. The function performs statistical enrichment analysis to find over-representation of functions from Gene Ontology
+In this enrichment analysis we Extracted the list of the top 100 differentially expressed genes and run gost function.
+The function enables to perform functional profiling of gene lists. The function performs statistical enrichment analysis to find over-representation of functions from Gene Ontology
 The x-axis represents the functional terms that are grouped and color-coded according to data sources and positioned according to the fixed “source_order”. The order is defined in a way that terms that are closer to each other in the source hierarchy are also next to each other in the Manhattan plot
 The y-axis shows the adjusted p-values in negative log10 scale. Every circle is one term and is sized according to the term size, i.e larger terms have larger circles.
 
