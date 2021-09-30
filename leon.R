@@ -26,8 +26,9 @@ if (!("org.Hs.eg.db" %in% installed.packages())) {
 }
 df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
 library(DOSE)
+library(org.Hs.eg.db)
+library(clusterProfiler)
 data("geneList")
-order(rowVars(assay(vst)), decreasing = TRUE)
 ego3 <- gseGO(geneList     = geneList,
               OrgDb        = org.Hs.eg.db,
               ont          = "CC",
@@ -35,4 +36,5 @@ ego3 <- gseGO(geneList     = geneList,
               maxGSSize    = 500,
               pvalueCutoff = 0.05,
               verbose      = FALSE)
+
              
