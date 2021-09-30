@@ -122,12 +122,13 @@ deseq_df <- deseq_results %>%
   # add a column for significance threshold results
   dplyr::mutate(threshold = padj < 0.05) %>%
   # sort by statistic -- the highest values will be genes with
-  # higher expression in RPL10 mutated samples
+  # higher expression
   dplyr::arrange(dplyr::desc(log2FoldChange))
 head(deseq_df)
 plotCounts(dds, gene = "DDX11L1", intgroup = "dex")
 ```
-
+we are performing differential expression analysis. In our DESeq2 object we designated ourdex variable which represent the group as the model argument. Because of this, the DESeq function will use groups defined by dex to test for differential expression.
+we will use lfcShrink inorder to decrease noise and preserve large differences between groups.we can see for example that The DDX11L1 gene samples have similar expression in both groups.
 
 Volcano plot
 
@@ -142,6 +143,7 @@ volcano_plot
 
 Summary of volcano plot
 
+in volcano plot we are presenting analysis between two groups, which presents the log fold-change vs. the log10 p-value.
 
 Heatmap
 
@@ -158,6 +160,7 @@ rownames(sampleDistMatrix) <- paste( vst$dex, sep = " - " )
 colnames(sampleDistMatrix) <- NULL
 colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
 
+#Heatmap of sample-to-sample distances
 pheatmap(sampleDistMatrix,clustering_distance_rows = sampleDists,
          clustering_distance_cols = sampleDists,col = colors)
 
@@ -169,6 +172,11 @@ mat<-mat-rowMeans(mat)
 anno <- as.data.frame(colData(vst)[c("dex")])
 pheatmap(mat, annotation_col = anno)
 ```
+Summary of heatmap plot
+we calculate the distance matrix and apply clustering , 
+In the sample distance heatmap made previously, the dendrogram at the side shows us a hierarchical clustering of the samples. Such a clustering can also be performed for the genes. Since the clustering is only relevant for genes that actually carry a signal, one usually would only cluster a subset of the most highly variable genes. Here, for demonstration, we are selecting the 20 genes with the highest variance across samples.
+Treatment status and cell line information are shown with colored bars at the top of the heatmap. Blocks of genes that covary across patients.
+
 
 Method/Ontology 1
 ```{r}
@@ -188,7 +196,8 @@ gostres <- gost(query = rownames(mat_100),
 names(gostres)
 head(gostres$result, 6)
 names(gostres$meta)
-gostplot(gostres, capped = TRUE, interactive = TRUE)
+plot1 <- gostplot(gostres, capped = TRUE, interactive = TRUE)
+plot1
 plot <- gostplot(gostres, capped = FALSE, interactive = FALSE)
 plot
 publish_gosttable(gostres, highlight_terms = gostres$result[c(1:2,10,120),],
@@ -200,6 +209,12 @@ publish_gosttable(gostres, highlight_terms = gostres$result[c(1:2,10,120),],
 ```
 
 summary of Method/Ontology 1
+method :gprofiler2
+Ontology : Gene Ontology
+in this enrichment analysis we Extracted the list of the top 100 differentially expressed genes and run gost function.
+the function enables to perform functional profiling of gene lists. The function performs statistical enrichment analysis to find over-representation of functions from Gene Ontology
+The x-axis represents the functional terms that are grouped and color-coded according to data sources and positioned according to the fixed “source_order”. The order is defined in a way that terms that are closer to each other in the source hierarchy are also next to each other in the Manhattan plot
+The y-axis shows the adjusted p-values in negative log10 scale. Every circle is one term and is sized according to the term size, i.e larger terms have larger circles.
 
 Method/Ontology 2
 ```{r}
