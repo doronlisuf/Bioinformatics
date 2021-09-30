@@ -28,7 +28,26 @@ df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
 library(DOSE)
 library(org.Hs.eg.db)
 library(clusterProfiler)
-data("geneList")
+res <- results(DESeq(dds))
+#store values
+geneList = res[,2]
+#create list of genes
+names_list = rownames(res)
+
+library('org.Hs.eg.db')
+
+#lead gene names into symbols variable
+symbols <- rownames(res)
+#map symbols to IDs
+gene_ids <- mapIds(org.Hs.eg.db, symbols, 'ENTREZID', 'SYMBOL')
+
+#update ID's in list of gene names
+for(i in 1:26364){
+  names_list[i] = gene_ids[names_list[i]]
+}
+names(geneList) = names_list
+geneList = sort(geneList, decreasing = TRUE)
+gene <- names(geneList)[abs(geneList) > 1.5]
 ego3 <- gseGO(geneList     = geneList,
               OrgDb        = org.Hs.eg.db,
               ont          = "CC",
@@ -36,5 +55,6 @@ ego3 <- gseGO(geneList     = geneList,
               maxGSSize    = 500,
               pvalueCutoff = 0.05,
               verbose      = FALSE)
-
+symbols = rownames(res)
+mapIds(org.Hs.eg.db, symbols, 'ENTREZID', 'SYMBOL')
              

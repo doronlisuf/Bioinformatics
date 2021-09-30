@@ -205,7 +205,7 @@ Method/Ontology 2
 ```{r}
 #Method 2 code
 #get differentially expressed genes
-dds <- DESeqDataSetFromMatrix(countData = cts,colData = coldata,design = ~ dex)
+dds <- DESeqDataSetFromMatrix(countData = matrix_of_data,colData = coldata,design = ~ dex)
 res <- results(DESeq(dds))
 #store values
 geneList = res[,2]
@@ -237,12 +237,31 @@ output_table <- x@result
 setDT(output_table)
 output_table
 ```
+```{r}
+y <- gseDO(geneList,
+           minGSSize     = 120,
+           pvalueCutoff  = 0.2,
+           pAdjustMethod = "BH",
+           verbose       = FALSE)
+output_table <- y@result
+setDT(output_table)
+output_table
+```
 
 summary of Method/Ontology 2
 
 Method/Ontology 3
 ```{r}
-#Method 3 code
+ego3 <- gseGO(geneList     = geneList,
+              OrgDb        = org.Hs.eg.db,
+              ont          = "CC",
+              minGSSize    = 100,
+              maxGSSize    = 500,
+              pvalueCutoff = 0.05,
+              verbose      = FALSE)
+output_table <- ego3@result
+setDT(output_table)
+output_table
 ```
 
 summary of Method/Ontology 3
