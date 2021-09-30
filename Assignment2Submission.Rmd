@@ -265,7 +265,7 @@ Summary of Method/Ontology 2
 Method :clustProfiler
 Ontology : Disease Ontology
 
-The results of the enrichment provide a table filled with 
+The results of the enrichment provide a table that did not contain any specific indicatation of schizophrenia. When ordering the table based on p-value, some related disorders to schizophrenia include dementia and bipolar disorder which are psychological disorders, however not schizophrenia specifically. There can be many reasons for this lack of findings, however the most possible might be that schizophrenia is not in the database used in the disease ontology for this enrichment.
 
 
 ```{r}
