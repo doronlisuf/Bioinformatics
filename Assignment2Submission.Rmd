@@ -8,6 +8,8 @@ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE119290
 ```{r}
 if (!requireNamespace("knitr", quietly = TRUE))
     install.packages("knitr")
+if(!("org.Hs.eg.db" %in% installed.packages()))
+  BiocManager::install('org.Hs.eg.db', update = FALSE)
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 if (!("DESeq2" %in% installed.packages())) {
@@ -258,7 +260,11 @@ setDT(output_table)
 output_table
 ```
 
-summary of Method/Ontology 2
+Summary of Method/Ontology 2
+Method :clustProfiler
+Ontology : Disease Ontology
+
+The results of the enrichment provide a table filled with 
 
 
 ```{r}
