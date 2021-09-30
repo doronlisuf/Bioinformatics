@@ -72,6 +72,7 @@ for(i in 1:26364) {
 vector_of_ranges
 plot(density(vector_of_ranges), log='x')
 ```
+The size of the expression matrix generated is 26,364 x 44. There are 26,364 different genes with 44 samples. Looking at the variation of counts, there are a few instances of very large ranges with majority of ranges being smaller.
 The density of gene variation follows an expected poisson distribution with lambda 1.There are some genes with high expression ranges, but most genes are not as variable.
 
 
