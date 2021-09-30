@@ -39,7 +39,6 @@ if (!("M3C" %in% installed.packages())) {
 library(M3C)
 library(umap)
 library(Rtsne)
-#library(data.table)
 library(clusterProfiler)
 library(gprofiler2)
 library ("pheatmap")
@@ -50,6 +49,7 @@ library(ggplot2)
 library(DESeq2)
 library(DOSE)
 library('org.Hs.eg.db')
+library(data.table)
 ```
 
 
@@ -213,8 +213,6 @@ geneList = res[,2]
 #create list of genes
 names_list = rownames(res)
 
-library('org.Hs.eg.db')
-
 #lead gene names into symbols variable
 symbols <- rownames(res)
 #map symbols to IDs
@@ -236,7 +234,9 @@ x <- enrichDO(gene          = gene,
               maxGSSize     = 500,
               qvalueCutoff  = 0.05,
               readable      = TRUE)
-head(x)
+output_table <- x@result
+setDT(output_table)
+output_table
 ```
 
 summary of Method/Ontology 2

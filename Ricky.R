@@ -7,7 +7,6 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 
 BiocManager::install('org.Hs.eg.db')
 
-BiocManager::install("mygene")
 
 df <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
 df_counts <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
@@ -40,7 +39,7 @@ geneList = res[,2]
 names_list = rownames(res)
 
 library('org.Hs.eg.db')
-
+library(data.table)
 #lead gene names into symbols variable
 symbols <- rownames(res)
 #map symbols to IDs
@@ -62,5 +61,6 @@ x <- enrichDO(gene          = gene,
               maxGSSize     = 500,
               qvalueCutoff  = 0.05,
               readable      = TRUE)
-head(x)
-
+output_table <- x@result
+setDT(output_table)
+output_table
