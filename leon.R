@@ -57,4 +57,26 @@ ego3 <- gseGO(geneList     = geneList,
               verbose      = FALSE)
 symbols = rownames(res)
 mapIds(org.Hs.eg.db, symbols, 'ENTREZID', 'SYMBOL')
+
+
+gostres <- gost(query = rownames(res), 
+                organism = "hsapiens", ordered_query = FALSE, 
+                multi_query = FALSE, significant = TRUE, exclude_iea = FALSE, 
+                measure_underrepresentation = FALSE, evcodes = FALSE, 
+                user_threshold = 0.05, correction_method = "g_SCS", 
+                domain_scope = "annotated", custom_bg = NULL, 
+                numeric_ns = "", sources = NULL, as_short_link = FALSE)
+
+names(gostres)
+head(gostres$result, 6)
+names(gostres$meta)
+gostplot(gostres, capped = TRUE, interactive = TRUE)
+plot <- gostplot(gostres, capped = FALSE, interactive = FALSE)
+plot
+publish_gosttable(gostres,
+                  use_colors = TRUE, 
+                  show_columns = c("source", "term_name", "term_size", "intersection_size"),
+                  filename = NULL)
+
+
              
