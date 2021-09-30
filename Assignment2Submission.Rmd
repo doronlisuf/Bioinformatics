@@ -250,8 +250,9 @@ output_table
 
 summary of Method/Ontology 2
 
-Method/Ontology 3
+
 ```{r}
+##### clustProfiler Gene Ontology#####
 ego3 <- gseGO(geneList     = geneList,
               OrgDb        = org.Hs.eg.db,
               ont          = "CC",
@@ -264,4 +265,6 @@ setDT(output_table)
 output_table
 ```
 
-summary of Method/Ontology 3
+As expected, the gene sets from the gene ontology are clearly related to schizophrenia, a neurodevelopmental disorder. The first few entries of the table all relate directly with significant differences with genes for the synapse, in integral part of neuron interaction for the to brain function. For example, a decrese in postsynaptic density, listed fourth on the table, dendritic spine density , has been linked to SZ in postmortem brain tissue [1].
+
+[1] Amber Berdenis van Berlekom, Cita H Muflihah, Gijsje J L J Snijders, Harold D MacGillavry, Jinte Middeldorp, Elly M Hol, René S Kahn, Lot D de Witte, Synapse Pathology in Schizophrenia: A Meta-analysis of Postsynaptic Elements in Postmortem Brain Studies, Schizophrenia Bulletin, Volume 46, Issue 2, March 2020, Pages 374–386, https://doi.org/10.1093/schbul/sbz060
