@@ -1,0 +1,71 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Names: Leon Kwan, Doron lisiansky, Richard Clarke
+github repo: https://github.com/r-clarke/bioinformatics
+https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE119290
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+if(!("ConsensusClusterPlus" %in% installed.packages()))
+  BiocManager::install('ConsensusClusterPlus', update = FALSE)
+```
+
+```{r}
+library(ConsensusClusterPlus)
+```
+
+```{r}
+matrix_of_data <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
+coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
+```
+
+```{r}
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:100],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+
+title="ConsensusClusterPlus"
+results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="hc",distance="pearson")
+results[[2]][["consensusTree"]]
+icl = calcICL(results,title=title)
+
+```
+```{r}
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:1000],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+
+title="ConsensusClusterPlus"
+results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="hc",distance="pearson")
+results[[2]][["consensusTree"]]
+icl = calcICL(results,title=title)
+```
+
+```{r}
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:1000],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+
+title="ConsensusClusterPlus"
+results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="hc",distance="pearson")
+results[[2]][["consensusTree"]]
+icl = calcICL(results,title=title)
+```
+```{r}
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:26364],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+
+title="ConsensusClusterPlus"
+results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="hc",distance="pearson")
+results[[2]][["consensusTree"]]
+icl = calcICL(results,title=title)
+```
+
+
+
