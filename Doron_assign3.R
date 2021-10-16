@@ -66,11 +66,11 @@ head(pbmc@meta.data, 5)
 pbmc <- Seurat::NormalizeData(pbmc)
 pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 5000)
 head(pbmc@assays, 5)
-top10 <- head(Seurat::VariableFeatures(pbmc), 10)
-plot1 <- Seurat::VariableFeaturePlot(pbmc)
-plot1
-plot2 <- Seurat::LabelPoints(plot = plot1, points = top10)
-plot2
+#top10 <- head(Seurat::VariableFeatures(pbmc), 10)
+#plot1 <- Seurat::VariableFeaturePlot(pbmc)
+#plot1
+#plot2 <- Seurat::LabelPoints(plot = plot1, points = top10)
+#plot2
 all.genes <- rownames(pbmc)
 pbmc <- Seurat::ScaleData(pbmc, features = all.genes)
 pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43)
@@ -82,8 +82,29 @@ pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
 pbmc <- Seurat::FindClusters(pbmc, resolution = 1.0)
 head(Seurat::Idents(pbmc),42)
-pbmc <- Seurat::RunUMAP(pbmc, dims = 1:10)
+pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
+
+x <- c(100,1000,10000)
+for (val in x) {
+  pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
+  pbmc <- Seurat::NormalizeData(pbmc)
+  pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = val)
+  all.genes <- rownames(pbmc)
+  pbmc <- Seurat::ScaleData(pbmc, features = all.genes)
+  pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43)
+  Seurat::DimPlot(pbmc, reduction = "pca")
+  pbmc
+  Seurat::ElbowPlot(pbmc)
+  
+  pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
+  
+  pbmc <- Seurat::FindClusters(pbmc, resolution = 1.0)
+  head(Seurat::Idents(pbmc),42)
+  pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
+  Seurat::DimPlot(pbmc, reduction = "umap")
+}
+print(count)
 
 pbmc.markers <- Seurat::FindAllMarkers(pbmc, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
 pbmc.markers %>%
