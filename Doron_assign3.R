@@ -80,10 +80,12 @@ Seurat::ElbowPlot(pbmc)
 
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 1.0)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 1.)
 head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
+
+
 
 x <- c(100,1000,10000)
 for (val in x) {
@@ -94,11 +96,8 @@ for (val in x) {
   pbmc <- Seurat::ScaleData(pbmc, features = all.genes)
   pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43)
   Seurat::DimPlot(pbmc, reduction = "pca")
-  pbmc
   Seurat::ElbowPlot(pbmc)
-  
   pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
-  
   pbmc <- Seurat::FindClusters(pbmc, resolution = 1.0)
   head(Seurat::Idents(pbmc),42)
   pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
@@ -115,6 +114,12 @@ top <- pbmc.markers %>%
   top_n(n = 10, wt = avg_log2FC)
 Seurat::DoHeatmap(pbmc, features = top$gene) + NoLegend()
 
+
+Seurat::Idents(pbmc)
+coldata
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq$p.value
+p.adjust(chisq$p.value,method="BH")
 
 #mat<-mat-rowMeans(mat)
 #anno <- as.data.frame(colData(vst)[c("dex")])
