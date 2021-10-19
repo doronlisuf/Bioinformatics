@@ -50,24 +50,56 @@ coldata
 ```{r}
 mads=apply(matrix_of_data,1,mad)
 d=matrix_of_data[rev(order(mads))[1:5000],]
-d=sweep(d,1, apply(d,1,median,na.rm=T))
+d1=sweep(d,1, apply(d,1,median,na.rm=T))
 
 title="ConsensusClusterPlus"
-results = ConsensusClusterPlus(d,maxK=3,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson")
+results = ConsensusClusterPlus(d1,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson")
 icl = calcICL(results,title=title)
 ```
 
 
+
 ```{r}
-for(gene_count in c(5000,10, 100,1000,10000)){
+for(gene_count in c(10, 100,1000,10000)){
   mads=apply(matrix_of_data,1,mad)
   d=matrix_of_data[rev(order(mads))[1:gene_count],]
   d=sweep(d,1, apply(d,1,median,na.rm=T))
   title="ConsensusClusterPlus"
-  results = ConsensusClusterPlus(d,maxK=3,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson")
+  results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson")
+  #ggplot(results[1], aes(y=Freq, axis1=))
 }
 
 
+```
+```{r}
+## notice the use of a variable (rather then using 3 directly in the following commands)
+nc <- 2
+
+annot <- read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt")
+rownames(annot) <- colnames(assayData)
+colnames(annot) <- c("DiseaseState")
+
+## remake heatmap, include both subtype and cluster assignments for visual comparison
+annot1 <- data.frame(annot,cluster=results[[nc]]$consensusClass)
+annotCol$cluster <- rainbow(n=nc)
+names(annotCol$cluster) <- unique(annot1$cluster)
+
+## use cluster tree from consensus clustering for column ordering in heatmap
+clust.col <- results[[nc]]$consensusTree
+## determine row ordering based on de-novo clustering
+clust.row <- hcopt(as.dist(1-cor(t(exprs(matrix_of_data)))),method="ward.D")
+
+##featureNames(cancerSet) <- fData(cancerSet)$hgnc_symbol
+heatmaptitle <- "Heatmap consensus clustering assignment vs. subtype\n top 4k z-score normalized"
+pheatmap(d1,
+         title=heatmaptitle,
+         #annotation_col = annot,
+         #annotation_colors = annotCol,
+         #cluster_rows=clust.row,
+         cluster_cols=clust.col,
+         show_rownames = FALSE,
+         show_colnames = FALSE,
+         scale = "row")
 ```
 
 
