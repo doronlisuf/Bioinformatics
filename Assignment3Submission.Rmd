@@ -33,8 +33,8 @@ library(dplyr)
 library(patchwork)
 library(clusterProfiler)
 library(gprofiler2)
-library (pheatmap)
-library (RColorBrewer)
+library(pheatmap)
+library(RColorBrewer)
 library(magrittr)
 library(matrixStats)
 library(ggplot2)
@@ -49,46 +49,28 @@ coldata
 
 ```{r}
 mads=apply(matrix_of_data,1,mad)
-d=matrix_of_data[rev(order(mads))[1:100],]
+d=matrix_of_data[rev(order(mads))[1:5000],]
 d=sweep(d,1, apply(d,1,median,na.rm=T))
 
 title="ConsensusClusterPlus"
-results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="hc",distance="pearson")
-results[[2]][["consensusTree"]]
-icl = calcICL(results,title=title)
-
-```
-```{r}
-mads=apply(matrix_of_data,1,mad)
-d=matrix_of_data[rev(order(mads))[1:1000],]
-d=sweep(d,1, apply(d,1,median,na.rm=T))
-
-title="ConsensusClusterPlus"
-results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="hc",distance="pearson")
-results[[2]][["consensusTree"]]
+results = ConsensusClusterPlus(d,maxK=3,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson")
 icl = calcICL(results,title=title)
 ```
+
 
 ```{r}
-mads=apply(matrix_of_data,1,mad)
-d=matrix_of_data[rev(order(mads))[1:1000],]
-d=sweep(d,1, apply(d,1,median,na.rm=T))
+for(gene_count in c(5000,10, 100,1000,10000)){
+  mads=apply(matrix_of_data,1,mad)
+  d=matrix_of_data[rev(order(mads))[1:gene_count],]
+  d=sweep(d,1, apply(d,1,median,na.rm=T))
+  title="ConsensusClusterPlus"
+  results = ConsensusClusterPlus(d,maxK=3,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson")
+}
 
-title="ConsensusClusterPlus"
-results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="hc",distance="pearson")
-results[[2]][["consensusTree"]]
-icl = calcICL(results,title=title)
-```
-```{r}
-mads=apply(matrix_of_data,1,mad)
-d=matrix_of_data[rev(order(mads))[1:26364],]
-d=sweep(d,1, apply(d,1,median,na.rm=T))
 
-title="ConsensusClusterPlus"
-results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="hc",distance="pearson")
-results[[2]][["consensusTree"]]
-icl = calcICL(results,title=title)
 ```
+
+
 ```{r}
 cts <- as.matrix(read.table("C:/Users/doron/source/semesterE-UF/Bioinformatics/bioinformatics/GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
 coldata<-read.csv("C:/Users/doron/source/semesterE-UF/Bioinformatics/bioinformatics/coldata.csv",header = T,row.names=1,stringsAsFactors=T)
