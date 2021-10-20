@@ -110,7 +110,7 @@ pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 1.0)
 head(Seurat::Idents(pbmc),42)
 idents <- as.matrix(Seurat::Idents(pbmc))
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
@@ -140,12 +140,19 @@ sampleDists
 sampleDistMatrix <- as.matrix( sampleDists )
 rownames(sampleDistMatrix) <- paste( vst$V1, sep = " - " )
 colnames(sampleDistMatrix) <- NULL
-colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+colors <- colorRampPalette( rev(brewer.pal(9, "Reds")) )(255)
 sampleDistMatrix
 #Heatmap of sample-to-sample distances
 pheatmap(sampleDistMatrix,clustering_distance_rows = sampleDists,
          clustering_distance_cols = sampleDists,col = colors)
+topVarGenes <- head(order(rowVars(assay(vst)), decreasing = TRUE), 5000)
+topVarGenes
+mat  <- assay(vst)[topVarGenes, ]
 
+mat<-mat-rowMeans(mat)
+mat
+anno <- as.data.frame(colData(vst)[c("V1")])
+pheatmap(mat, annotation_col = anno)
 ```
 
 ```{r}
@@ -163,7 +170,7 @@ pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 1)
 head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
