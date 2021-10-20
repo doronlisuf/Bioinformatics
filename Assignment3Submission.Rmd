@@ -20,7 +20,9 @@ if (!("Seurat" %in% installed.packages())) {
 if (!("limma" %in% installed.packages())) {
   BiocManager::install("limma", update = FALSE)
 }
-
+if (!("ggalluvial" %in% installed.packages())) {
+  BiocManager::install("ggalluvial", update = FALSE)
+}
 
 ```
 
@@ -39,12 +41,14 @@ library(magrittr)
 library(matrixStats)
 library(ggplot2)
 library(DESeq2)
+library(ggalluvial)
 ```
 
 ```{r}
 matrix_of_data <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
 coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
 coldata
+
 ```
 
 ```{r}
@@ -109,9 +113,10 @@ coldata<-read.csv("C:/Users/doron/source/semesterE-UF/Bioinformatics/bioinformat
 
 ```
 
+
 ```{r}
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
-pbmc
+#pbmc
 head(pbmc@meta.data, 5)
 pbmc <- Seurat::NormalizeData(pbmc)
 pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 5000)
@@ -120,15 +125,16 @@ all.genes <- rownames(pbmc)
 pbmc <- Seurat::ScaleData(pbmc, features = all.genes)
 pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43)
 Seurat::DimPlot(pbmc, reduction = "pca")
-pbmc
+#pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
-
-pbmc <- Seurat::FindClusters(pbmc, resolution = 1.0)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 0.95)
 head(Seurat::Idents(pbmc),42)
 idents <- as.matrix(Seurat::Idents(pbmc))
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
+
+
 ```
 
 ```{r}
@@ -167,7 +173,27 @@ mat<-mat-rowMeans(mat)
 mat
 anno <- as.data.frame(colData(vst)[c("V1")])
 pheatmap(mat, annotation_col = anno)
+
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+aluv_data
+ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 5000 genes")
+
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq
+data <- data.frame(knn_chi_5000 = chisq$p.value)
+data 
+#p.adjust(chisq$p.value,method="BH")
 ```
+
+
+
 
 ```{r}
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
@@ -184,10 +210,26 @@ pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 1)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 1.)
 head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
+    
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+  aluv_data
+  ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 10000 genes")
+
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq$p.value
+data$knn_chi_10000 = chisq$p.value  
+#p.adjust(chisq$p.value,method="BH")  
 ```
 
 
@@ -206,10 +248,25 @@ pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 0.95)
 head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
+
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+  aluv_data
+  ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 1000 genes")
+  
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq$p.value
+data$knn_chi_1000 = chisq$p.value   
 ```
 
 ```{r}
@@ -227,10 +284,25 @@ pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 0.95)
 head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
+
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+  aluv_data
+  ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 100 genes")
+  
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq$p.value
+data$knn_chi_100 = chisq$p.value   
 ```
 
 
@@ -247,19 +319,38 @@ pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43
 Seurat::DimPlot(pbmc, reduction = "pca")
 pbmc
 Seurat::ElbowPlot(pbmc)
-pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:5)
+pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:8)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+pbmc <- Seurat::FindClusters(pbmc, resolution =0.95)
 head(Seurat::Idents(pbmc),42)
-pbmc <- Seurat::RunUMAP(pbmc, dims = 1:5)
+pbmc <- Seurat::RunUMAP(pbmc, dims = 1:8)
 Seurat::DimPlot(pbmc, reduction = "umap")
+
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+  aluv_data
+  ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 10 genes")
+  
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq$p.value
+data$knn_chi_10 = chisq$p.value   
 ```
 
 
 ```{r}
-Seurat::Idents(pbmc)
-coldata
-chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
-chisq$p.value
-p.adjust(chisq$p.value,method="BH")
+data
+p_matrix <- as.matrix(data)
+p_adjust <- p.adjust(p_matrix,method="BH")
+p_adjust
+
+stat_table <- data.frame(  p_sq = t(p_matrix) , p_adjust_sq = p_adjust)
+stat_table 
+
+
 ```
