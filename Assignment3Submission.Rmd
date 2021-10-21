@@ -94,29 +94,151 @@ coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
 
 ```
 
+Clustering Method: Hierarchical Clustering (hclust)
 ```{r}
+dds <- DESeqDataSetFromMatrix(countData = matrix_of_data,colData = coldata,design = ~ dex)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#create distance matrix with the top 10 variable genes
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:10],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+d = scale(d)
+di <- dist(d)
+
+#perform hclustering and plot dendrogram
+hc <- hclust(di, method="ward.D")
+plot(hc)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#create distance matrix with the top 100 variable genes
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:100],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+d = scale(d)
+di <- dist(d)
+
+#perform hclustering and plot dendrogram
+hc <- hclust(di, method="ward.D")
+plot(hc)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#create distance matrix with the top 1000 variable genes
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:1000],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+d = scale(d)
+di <- dist(d)
+
+#perform hclustering and plot dendrogram
+hc <- hclust(di, method="ward.D")
+plot(hc)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#create distance matrix with the top 10000 variable genes
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:10000],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+d = scale(d)
+di <- dist(d)
+
+#perform hclustering and plot dendrogram
+hc <- hclust(di, method="ward.D")
+plot(hc)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#create distance matrix with the top 5000 variable genes
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:5000],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+d = scale(d)
+di <- dist(d)
+
+#perform hclustering and plot dendrogram
+hc <- hclust(di, method="ward.D")
+plot(hc)
+```
+After running hclust, we are able to view the dendrograms of the hierarchical clustering method. Looking first at the results from the top 5000 variable genes, it is clear that the dendrogram splits into 2 main clusters. This is why the k value 2 was chosen for the clustering in the heatmap below. Changing the k value created more clusters but left 2 with majority of the genes and the rest with either 0 genes or very few in the cluster.
+
+Comparing to the results of running the clustering method with 10, 100, 1000, and 10000 genes, all of the results show 2 main groups or clusters in the dendrogram of results. A smaller cluster that splits off from a much larger cluster in each of the results from the clusting method. 
+
+```{r}
+#draw heatmap with clusters and dendrograms
+row_dend = as.dendrogram(hclust(dist(d), method="ward.D"))# row clustering
+row_dend = color_branches(row_dend, k = 2)
+col_dend = as.dendrogram(hclust(dist(t(d)), method="ward.D")) # column clustering
+col_dend = color_branches(col_dend, k = 2)
+
+suppressMessages(
+Heatmap(
+          d, 
+          name = "expression", 
+          column_title = c("Cluster 1", "Cluster 2"),
+          row_title = c("Cluster 1", "Cluster 2"),
+          row_title_rot = 0,
+          row_names_gp = gpar(fontsize = 7),
+          cluster_rows = row_dend,
+          cluster_columns = col_dend,
+          row_split = 2,
+          column_split = 2
+        )
+)
+
+```
+Chi-Squared portion for Hierarchical Clustering
+```{r}
+
+```
+
+
+```{r}
+cts <- as.matrix(read.table("C:/Users/doron/source/semesterE-UF/Bioinformatics/bioinformatics/GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
+coldata<-read.csv("C:/Users/doron/source/semesterE-UF/Bioinformatics/bioinformatics/coldata.csv",header = T,row.names=1,stringsAsFactors=T)
+
+```
+
+
+```{r}
+# performing knn clustring method with 5000 genes.
+# Initialize the Seurat object with the raw (non-normalized data).
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
-pbmc
+#pbmc
 head(pbmc@meta.data, 5)
+### Normalizing the data
+#We will normalize the data ensuring expression values across cells are on a comparable scale
 pbmc <- Seurat::NormalizeData(pbmc)
+# Identify the 5000 most highly variable genes
 pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 5000)
 head(pbmc@assays, 5)
+### Data scaling
 all.genes <- rownames(pbmc)
 pbmc <- Seurat::ScaleData(pbmc, features = all.genes)
+### Linear dimensional reduction
 pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43)
 Seurat::DimPlot(pbmc, reduction = "pca")
-pbmc
-Seurat::ElbowPlot(pbmc)
-pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+### Determine the dimentionality of dataset
+Seurat::ElbowPlot(pbmc)
+### Cluster the data
+#K-nearest neighbor (KNN) graph based on the euclidean distance in PCA space
+pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 0.95)
 head(Seurat::Idents(pbmc),42)
+#saving the final classes from the clustering
 idents <- as.matrix(Seurat::Idents(pbmc))
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
+
+
 ```
 
 ```{r}
+# find markers for every cluster compared to all remaining samples, report only the positive ones
 pbmc.markers <- Seurat::FindAllMarkers(pbmc, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
 pbmc.markers %>%
   group_by(cluster) %>%
@@ -124,6 +246,8 @@ pbmc.markers %>%
 top <- pbmc.markers %>%
   group_by(cluster) %>%
   top_n(n = 10, wt = avg_log2FC)
+
+#draw heatmap with clusters and dendrograms
 
 Seurat::DoHeatmap(pbmc, features = top$gene,group.bar = TRUE) 
 
@@ -139,15 +263,53 @@ sampleDists
 sampleDistMatrix <- as.matrix( sampleDists )
 rownames(sampleDistMatrix) <- paste( vst$V1, sep = " - " )
 colnames(sampleDistMatrix) <- NULL
-colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+colors <- colorRampPalette( rev(brewer.pal(9, "Reds")) )(255)
 sampleDistMatrix
 #Heatmap of sample-to-sample distances
 pheatmap(sampleDistMatrix,clustering_distance_rows = sampleDists,
          clustering_distance_cols = sampleDists,col = colors)
+topVarGenes <- head(order(rowVars(assay(vst)), decreasing = TRUE), 5000)
+topVarGenes
+mat  <- assay(vst)[topVarGenes, ]
 
+mat<-mat-rowMeans(mat)
+mat
+anno <- as.data.frame(colData(vst)[c("V1")])
+pheatmap(mat, annotation_col = anno)
+
+#Create an alluvial diagram 
+
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+aluv_data
+ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 5000 genes")
+
+#adding chi squared results for final statistics
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq
+data <- data.frame(knn_chi_5000 = chisq$p.value)
+data 
+#p.adjust(chisq$p.value,method="BH")
 ```
 
+Seurat clusters cells based on their PCA scores in order to overcome the extensive technical noise in any single feature for scRNA-seq data. The top principal components represent a robust compression of the dataset.
+
+To decide how many components should we choose to include, we applied the Elbow plot method: a ranking of principle components based on the percentage of variance explained by each one.
+
+first we ran knn with the top 5000 variable genes, we got 2 clasess and from the alluvial plot we can see the clustering was very good in compare to the real groups(sz, control)
+
+in this specific method we are not selecting  k, Setting the resolution parameter is changing the number of clusters , from what i read , resolution between 0.4-1.2 typically returns good results for single-cell datasets of around 3K cells.
+
+
+
 ```{r}
+# performing knn clustring method with 10000 genes.
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
 pbmc
 head(pbmc@meta.data, 5)
@@ -162,14 +324,35 @@ pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 1.)
 head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
-```
+    
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+  aluv_data
+  ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 10000 genes")
 
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq$p.value
+data$knn_chi_10000 = chisq$p.value  
+#p.adjust(chisq$p.value,method="BH")  
+```
+performing knn clustring method with 10000 genes.
+we Initialize the Seurat object with the data , then We will normalize the data ensuring expression values across cells are on a comparable scale.
+We next calculate a subset of features that exhibit high gene-to-gene variation in the dataset , we will scale the data and run pca.
+we will cluster the data using K-nearest neighbor (KNN) graph based on the euclidean distance in PCA space and will set the resolution parameter(which affects on the number of clusters).
+in the end we will plot the alluvial plot and compute the chi-squared test.
 
 ```{r}
+# performing knn clustring method with 1000 genes.
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
 pbmc
 head(pbmc@meta.data, 5)
@@ -184,13 +367,34 @@ pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 0.95)
 head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
+
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+  aluv_data
+  ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 1000 genes")
+  
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq$p.value
+data$knn_chi_1000 = chisq$p.value   
 ```
+performing knn clustring method with 1000 genes.
+we Initialize the Seurat object with the data , then We will normalize the data ensuring expression values across cells are on a comparable scale.
+We next calculate a subset of features that exhibit high gene-to-gene variation in the dataset , we will scale the data and run pca.
+we will cluster the data using K-nearest neighbor (KNN) graph based on the euclidean distance in PCA space and will set the resolution parameter(which affects on the number of clusters).
+in the end we will plot the alluvial plot and compute the chi-squared test.
 
 ```{r}
+# performing knn clustring method with 100 genes.
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
 pbmc
 head(pbmc@meta.data, 5)
@@ -205,14 +409,34 @@ pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+pbmc <- Seurat::FindClusters(pbmc, resolution = 0.95)
 head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
-```
 
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+  aluv_data
+  ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 100 genes")
+  
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq$p.value
+data$knn_chi_100 = chisq$p.value   
+```
+performing knn clustring method with 100 genes.
+we Initialize the Seurat object with the data , then We will normalize the data ensuring expression values across cells are on a comparable scale.
+We next calculate a subset of features that exhibit high gene-to-gene variation in the dataset , we will scale the data and run pca.
+we will cluster the data using K-nearest neighbor (KNN) graph based on the euclidean distance in PCA space and will set the resolution parameter(which affects on the number of clusters).
+in the end we will plot the alluvial plot and compute the chi-squared test.
 
 ```{r}
+# performing knn clustring method with 10 genes.
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
 pbmc
 head(pbmc@meta.data, 5)
@@ -225,19 +449,39 @@ pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43
 Seurat::DimPlot(pbmc, reduction = "pca")
 pbmc
 Seurat::ElbowPlot(pbmc)
-pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:5)
+pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:8)
 
-pbmc <- Seurat::FindClusters(pbmc, resolution = 0.9)
+pbmc <- Seurat::FindClusters(pbmc, resolution =0.95)
 head(Seurat::Idents(pbmc),42)
-pbmc <- Seurat::RunUMAP(pbmc, dims = 1:5)
+pbmc <- Seurat::RunUMAP(pbmc, dims = 1:8)
 Seurat::DimPlot(pbmc, reduction = "umap")
+
+aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
+  aluv_data
+  ggplot(aluv_data,
+       aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
+  geom_alluvium(aes(fill = Var3), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  ggtitle("alluvial diagram for knn with 10 genes")
+  
+chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
+chisq$p.value
+data$knn_chi_10 = chisq$p.value   
 ```
+Comparing to the results of running the clustering method with 10, 100, 1000, and 10000 genes, all of the results show 2/3 clusters . the results for each number off genes is a bit different even if it return the same number of clusters and we can see in the alluvial plots how they are accurate.
 
 
 ```{r}
-Seurat::Idents(pbmc)
-coldata
-chisq <- chisq.test(table(Seurat::Idents(pbmc), coldata$dex))
-chisq$p.value
-p.adjust(chisq$p.value,method="BH")
+data
+p_matrix <- as.matrix(data)
+p_adjust <- p.adjust(p_matrix,method="BH")
+p_adjust
+
+stat_table <- data.frame(  p_sq = t(p_matrix) , p_adjust_sq = p_adjust)
+stat_table 
+
+
 ```
