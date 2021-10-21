@@ -20,12 +20,16 @@ if (!("Seurat" %in% installed.packages())) {
 if (!("limma" %in% installed.packages())) {
   BiocManager::install("limma", update = FALSE)
 }
-
+if (!("ComplexHeatmap" %in% installed.packages())) {
+  BiocManager::install("ComplexHeatmap", update = FALSE)
+}
 
 ```
 
 ```{r}
-
+library(cluster)
+library(ComplexHeatmap)
+library(dendextend)
 library(ConsensusClusterPlus)
 library(Seurat)
 library(limma)
@@ -39,12 +43,14 @@ library(magrittr)
 library(matrixStats)
 library(ggplot2)
 library(DESeq2)
+library(ggalluvial)
+library(GGally)
+librar(broom)
 ```
 
 ```{r}
 matrix_of_data <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
 coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
-coldata
 ```
 
 ```{r}
@@ -54,24 +60,127 @@ d1=sweep(d,1, apply(d,1,median,na.rm=T))
 
 title="ConsensusClusterPlus"
 results1 = ConsensusClusterPlus(d1,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson")
-icl = calcICL(results,title=title)
+icl = calcICL(results1,title=title)
 ```
-Consensus clustering using PAM shows that k=2 has the best clustering stability, with two clean, blue, squares. The other k's are not as clearly clustered.Other plots show statistics related to consensus cdf and tracking plot. As shown in the item consensus bar graphs, the bars in k=2 were the most similar to each other in height. Consensus Clustering Plus also conveniently shows the heatmaps for each K.
+Consensus clustering using PAM shows that k=2 has the best clustering stability, as shown in the heatmaps with two clean, blue, squares. The other k's are not as clearly clustered. Other plots show statistics related to consensus cdf and tracking plot. As shown in the item consensus bar graphs, the bars in k=2 were the most similar to each other in height.
+
+```{r}
+clust.row <- hclust(dist(d1), method="ward.D")
+#clust.row <- pam(d1, k=2)
+clust.col <- results1[[2]]$consensusTree
+consensus_res <- results1[[2]]$consensusClass
+consensus_res <- replace(consensus_res, consensus_res==1, "SZ")
+consensus_res <- replace(consensus_res, consensus_res==2, "Control")
+annotcol <- as.data.frame(consensus_res)
+
+pheatmap(d1,
+         #title="consensus cluster plus with PAM for 5000 genes",
+         cluster_rows=clust.row,
+         cluster_cols=clust.col,
+         annotation_col = annotcol,
+         show_rownames = FALSE,
+         show_colnames = FALSE,
+         scale = "row")
+```
+The heatmap for consensus clustering with PAM shows the differences in gene expression between control and schizophrenic patients. The control patients have a positive difference, as shown with more red, while, SZ patients have a negative difference in gene expression, as shown with more blue.
+
+```{r}
+gene_count = 10
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:gene_count],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+title="ConsensusClusterPlus"
+results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson", plot='pdf')
+#ggplot(results[1], aes(y=Freq, axis1=))
+consensus_res <- results[[2]]$consensusClass
+consensus_res <- replace(consensus_res, consensus_res==1, "SZ")
+consensus_res <- replace(consensus_res, consensus_res==2, "Control")
+aluv_data = as.data.frame(table(names(consensus_res),consensus_res, coldata$dex))
+aluv_data
+ggplot(aluv_data,
+     aes(y = Freq, axis1 = Var1, axis2 = consensus_res)) +
+geom_alluvium(aes(fill = Var3), width = 1/12) +
+geom_stratum(width = 1/12, fill = "black", color = "grey") +
+geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+scale_fill_brewer(type = "qual", palette = "Set1") +
+ggtitle("alluvial diagram for consensus clustering with 10 genes")
+```
+With only 10 genes, control ans SZ are clustered poorly. 
+
+```{r}
+gene_count = 100
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:gene_count],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+title="ConsensusClusterPlus"
+results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson", plot='pdf')
+#ggplot(results[1], aes(y=Freq, axis1=))
+consensus_res <- results[[2]]$consensusClass
+consensus_res <- replace(consensus_res, consensus_res==1, "SZ")
+consensus_res <- replace(consensus_res, consensus_res==2, "Control")
+aluv_data = as.data.frame(table(names(consensus_res),consensus_res, coldata$dex))
+aluv_data
+ggplot(aluv_data,
+     aes(y = Freq, axis1 = Var1, axis2 = consensus_res)) +
+geom_alluvium(aes(fill = Var3), width = 1/12) +
+geom_stratum(width = 1/12, fill = "black", color = "grey") +
+geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+scale_fill_brewer(type = "qual", palette = "Set1") +
+ggtitle("alluvial diagram for consensus clustering with 100 genes")
+```
+At 100 genes, control ans SZ are still clustered poorly. 
 
 
 ```{r}
-for(gene_count in c(10, 100,1000,10000)){
-  mads=apply(matrix_of_data,1,mad)
-  d=matrix_of_data[rev(order(mads))[1:gene_count],]
-  d=sweep(d,1, apply(d,1,median,na.rm=T))
-  title="ConsensusClusterPlus"
-  results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson")
-  #ggplot(results[1], aes(y=Freq, axis1=))
-}
-
-
+gene_count = 1000
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:gene_count],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+title="ConsensusClusterPlus"
+results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson", plot='pdf')
+#ggplot(results[1], aes(y=Freq, axis1=))
+consensus_res <- results[[2]]$consensusClass
+consensus_res <- replace(consensus_res, consensus_res==1, "SZ")
+consensus_res <- replace(consensus_res, consensus_res==2, "Control")
+aluv_data = as.data.frame(table(names(consensus_res),consensus_res, coldata$dex))
+aluv_data
+ggplot(aluv_data,
+     aes(y = Freq, axis1 = Var1, axis2 = consensus_res)) +
+geom_alluvium(aes(fill = Var3), width = 1/12) +
+geom_stratum(width = 1/12, fill = "black", color = "grey") +
+geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+scale_fill_brewer(type = "qual", palette = "Set1") +
+ggtitle("alluvial diagram for consensus clustering with 1000 genes")
 ```
+At 1000 genes, control ans SZ are still clustered poorly. 
 
+
+```{r}
+gene_count = 10000
+mads=apply(matrix_of_data,1,mad)
+d=matrix_of_data[rev(order(mads))[1:gene_count],]
+d=sweep(d,1, apply(d,1,median,na.rm=T))
+title="ConsensusClusterPlus"
+results = ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,pFeature=1,title=title,clusterAlg="pam",distance="pearson", plot='pdf')
+#ggplot(results[1], aes(y=Freq, axis1=))
+consensus_res <- results[[2]]$consensusClass
+consensus_res <- replace(consensus_res, consensus_res==1, "SZ")
+consensus_res <- replace(consensus_res, consensus_res==2, "Control")
+aluv_data = as.data.frame(table(names(consensus_res),consensus_res, coldata$dex))
+aluv_data
+ggplot(aluv_data,
+     aes(y = Freq, axis1 = Var1, axis2 = consensus_res)) +
+geom_alluvium(aes(fill = Var3), width = 1/12) +
+geom_stratum(width = 1/12, fill = "black", color = "grey") +
+geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+scale_fill_brewer(type = "qual", palette = "Set1") +
+ggtitle("alluvial diagram for consensus clustering with 10,000 genes")
+```
+At 10000 genes, accuracy remains low.
 
 ```{r}
 #coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
@@ -81,12 +190,12 @@ for(gene_count in c(10, 100,1000,10000)){
 #coldata$dex[coldata$dex == 'Control'] <- 2
 
 consensus_res <- results1[[2]]$consensusClass
-replace(consensus_res, 1, "SZ")
-replace(consensus_res, 2, "Control")
+consensus_res <- replace(consensus_res, consensus_res==1, "SZ")
+consensus_res <- replace(consensus_res, consensus_res==2, "Control")
 chisq <- chisq.test(coldata$dex, consensus_res)
 chisq
 ```
-The p-value for the clustered values are not significantly different than the provided data. This means consensus cluster plus
+The high p-value of 0.7621 shows that the clustered values are not significantly different than the provided data. This means that this clustering method is well fitted to the sample data.
 
 ```{r}
 cts <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
@@ -162,6 +271,8 @@ di <- dist(d)
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
 plot(hc)
+
+hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
 ```
 After running hclust, we are able to view the dendrograms of the hierarchical clustering method. Looking first at the results from the top 5000 variable genes, it is clear that the dendrogram splits into 2 main clusters. This is why the k value 2 was chosen for the clustering in the heatmap below. Changing the k value created more clusters but left 2 with majority of the genes and the rest with either 0 genes or very few in the cluster.
 
@@ -204,8 +315,8 @@ chisq
 
 
 ```{r}
-cts <- as.matrix(read.table("C:/Users/doron/source/semesterE-UF/Bioinformatics/bioinformatics/GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
-coldata<-read.csv("C:/Users/doron/source/semesterE-UF/Bioinformatics/bioinformatics/coldata.csv",header = T,row.names=1,stringsAsFactors=T)
+cts <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
+coldata<-read.csv("coldata.csv",header = T,row.names=1,stringsAsFactors=T)
 
 ```
 
@@ -241,6 +352,7 @@ idents <- as.matrix(Seurat::Idents(pbmc))
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
 
+knn_res <- Seurat::Idents(pbmc)
 
 ```
 
@@ -483,6 +595,7 @@ Comparing to the results of running the clustering method with 10, 100, 1000, an
 
 ```{r}
 data
+
 p_matrix <- as.matrix(data)
 p_adjust <- p.adjust(p_matrix,method="BH")
 p_adjust
@@ -490,5 +603,13 @@ p_adjust
 stat_table <- data.frame(  p_sq = t(p_matrix) , p_adjust_sq = p_adjust)
 stat_table 
 
+pairs <- as.data.frame(coldata)
+colnames(pairs)[1] <- "samples"
+pairs$knn <- knn_res
+pairs$consensus <- consensus_res
+pairs$hc <- hc_res
 
+ggplot(pairs) + 
+  aes(fill="red")+
+  stat_cross()
 ```
