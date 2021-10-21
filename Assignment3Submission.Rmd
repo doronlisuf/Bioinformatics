@@ -214,15 +214,15 @@ mads=apply(matrix_of_data,1,mad)
 d=matrix_of_data[rev(order(mads))[1:10],]
 d=sweep(d,1, apply(d,1,median,na.rm=T))
 d = scale(d)
-di <- dist(d)
+di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
 plot(hc)
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
-hc_res <- replace(hc_res, hc_res == 1, "SZ")
-hc_res <- replace(hc_res, hc_res == 2, "Control")
+hc_res <- replace(hc_res, hc_res == 2, "SZ")
+hc_res <- replace(hc_res, hc_res == 1, "Control")
 aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
 ggplot(aluv_data,
      aes(y = Freq, axis1 = Var1, axis2 = hc_res)) +
@@ -240,15 +240,15 @@ mads=apply(matrix_of_data,1,mad)
 d=matrix_of_data[rev(order(mads))[1:100],]
 d=sweep(d,1, apply(d,1,median,na.rm=T))
 d = scale(d)
-di <- dist(d)
+di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
 plot(hc)
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
-hc_res <- replace(hc_res, hc_res == 1, "SZ")
-hc_res <- replace(hc_res, hc_res == 2, "Control")
+hc_res <- replace(hc_res, hc_res == 2, "SZ")
+hc_res <- replace(hc_res, hc_res == 1, "Control")
 aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
 ggplot(aluv_data,
      aes(y = Freq, axis1 = Var1, axis2 = hc_res)) +
@@ -266,15 +266,15 @@ mads=apply(matrix_of_data,1,mad)
 d=matrix_of_data[rev(order(mads))[1:1000],]
 d=sweep(d,1, apply(d,1,median,na.rm=T))
 d = scale(d)
-di <- dist(d)
+di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
 plot(hc)
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
-hc_res <- replace(hc_res, hc_res == 1, "SZ")
-hc_res <- replace(hc_res, hc_res == 2, "Control")
+hc_res <- replace(hc_res, hc_res == 2, "SZ")
+hc_res <- replace(hc_res, hc_res == 1, "Control")
 aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
 ggplot(aluv_data,
      aes(y = Freq, axis1 = Var1, axis2 = hc_res)) +
@@ -292,15 +292,15 @@ mads=apply(matrix_of_data,1,mad)
 d=matrix_of_data[rev(order(mads))[1:10000],]
 d=sweep(d,1, apply(d,1,median,na.rm=T))
 d = scale(d)
-di <- dist(d)
+di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
 plot(hc)
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
-hc_res <- replace(hc_res, hc_res == 1, "SZ")
-hc_res <- replace(hc_res, hc_res == 2, "Control")
+hc_res <- replace(hc_res, hc_res == 2, "SZ")
+hc_res <- replace(hc_res, hc_res == 1, "Control")
 aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
 ggplot(aluv_data,
      aes(y = Freq, axis1 = Var1, axis2 = hc_res)) +
@@ -318,15 +318,15 @@ mads=apply(matrix_of_data,1,mad)
 d=matrix_of_data[rev(order(mads))[1:5000],]
 d=sweep(d,1, apply(d,1,median,na.rm=T))
 d = scale(d)
-di <- dist(d)
+di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
 plot(hc)
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
-hc_res <- replace(hc_res, hc_res == 1, "SZ")
-hc_res <- replace(hc_res, hc_res == 2, "Control")
+hc_res <- replace(hc_res, hc_res == 2, "SZ")
+hc_res <- replace(hc_res, hc_res == 1, "Control")
 
 aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
 ggplot(aluv_data,
@@ -342,6 +342,8 @@ ggtitle("alluvial diagram for hierarchical clustering with 5,000 genes")
 After running hclust, we are able to view the dendrograms of the hierarchical clustering method. Looking first at the results from the top 5000 variable genes, it is clear that the dendrogram splits into 2 main clusters. This is why the k value 2 was chosen for the clustering in the heatmap below. Changing the k value created more clusters but left 2 with majority of the genes and the rest with either 0 genes or very few in the cluster.
 
 Comparing to the results of running the clustering method with 10, 100, 1000, and 10000 genes, all of the results show 2 main groups or clusters in the dendrogram of results. A smaller cluster that splits off from a much larger cluster in each of the results from the clusting method. 
+
+Looking at the alluvial diagrams, only for the clustering method using 100 genes did we notice a much larger mismatch of SZ and Control values. The rest of the diagrams are mostly correct with their clustering of SZ and Control samples.
 
 ```{r}
 #draw heatmap with clusters and dendrograms
@@ -370,15 +372,15 @@ Chi-Squared portion for Hierarchical Clustering
 ```{r}
 sample_cluster <- hclust(dist(t(d)), method="ward.D")
 hclust_results <- cutree(sample_cluster, k = 2)
-hclust_results <- replace(hclust_results, hclust_results == 1, "SZ")
-hclust_results <- replace(hclust_results, hclust_results == 2, "Control")
+hclust_results <- replace(hclust_results, hclust_results == 2, "SZ")
+hclust_results <- replace(hclust_results, hclust_results == 1, "Control")
 
 chisq <- chisq.test(coldata$dex, hclust_results)
 chisq
 
 
 ```
-
+With 1 degree of freedom and a X-squared value of 0.48485, differences between the expected and observed numbers occur my change between 25% and 50% of the time after looking at the Chi Squared distribution table. With this evaluation, we fail to reject our hypothesis.
 
 ```{r}
 cts <- as.matrix(read.table("GSE119290_Readhead_2018_RNAseq_gene_counts.txt"))
