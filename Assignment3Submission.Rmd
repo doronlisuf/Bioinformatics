@@ -45,7 +45,7 @@ library(ggplot2)
 library(DESeq2)
 library(ggalluvial)
 library(GGally)
-librar(broom)
+library(broom)
 ```
 
 ```{r}
@@ -220,6 +220,19 @@ di <- dist(d)
 hc <- hclust(di, method="ward.D")
 plot(hc)
 
+hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
+hc_res <- replace(hc_res, hc_res == 1, "SZ")
+hc_res <- replace(hc_res, hc_res == 2, "Control")
+aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
+ggplot(aluv_data,
+     aes(y = Freq, axis1 = Var1, axis2 = hc_res)) +
+geom_alluvium(aes(fill = Var3), width = 1/12) +
+geom_stratum(width = 1/12, fill = "black", color = "grey") +
+geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+scale_fill_brewer(type = "qual", palette = "Set1") +
+ggtitle("alluvial diagram for hierarchical clustering with 10 genes")
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #create distance matrix with the top 100 variable genes
@@ -232,6 +245,19 @@ di <- dist(d)
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
 plot(hc)
+
+hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
+hc_res <- replace(hc_res, hc_res == 1, "SZ")
+hc_res <- replace(hc_res, hc_res == 2, "Control")
+aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
+ggplot(aluv_data,
+     aes(y = Freq, axis1 = Var1, axis2 = hc_res)) +
+geom_alluvium(aes(fill = Var3), width = 1/12) +
+geom_stratum(width = 1/12, fill = "black", color = "grey") +
+geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+scale_fill_brewer(type = "qual", palette = "Set1") +
+ggtitle("alluvial diagram for hierarchical clustering with 100 genes")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -246,6 +272,19 @@ di <- dist(d)
 hc <- hclust(di, method="ward.D")
 plot(hc)
 
+hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
+hc_res <- replace(hc_res, hc_res == 1, "SZ")
+hc_res <- replace(hc_res, hc_res == 2, "Control")
+aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
+ggplot(aluv_data,
+     aes(y = Freq, axis1 = Var1, axis2 = hc_res)) +
+geom_alluvium(aes(fill = Var3), width = 1/12) +
+geom_stratum(width = 1/12, fill = "black", color = "grey") +
+geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+scale_fill_brewer(type = "qual", palette = "Set1") +
+ggtitle("alluvial diagram for hierarchical clustering with 1,000 genes")
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #create distance matrix with the top 10000 variable genes
@@ -258,6 +297,19 @@ di <- dist(d)
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
 plot(hc)
+
+hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
+hc_res <- replace(hc_res, hc_res == 1, "SZ")
+hc_res <- replace(hc_res, hc_res == 2, "Control")
+aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
+ggplot(aluv_data,
+     aes(y = Freq, axis1 = Var1, axis2 = hc_res)) +
+geom_alluvium(aes(fill = Var3), width = 1/12) +
+geom_stratum(width = 1/12, fill = "black", color = "grey") +
+geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+scale_fill_brewer(type = "qual", palette = "Set1") +
+ggtitle("alluvial diagram for hierarchical clustering with 10,000 genes")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -273,6 +325,19 @@ hc <- hclust(di, method="ward.D")
 plot(hc)
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
+hc_res <- replace(hc_res, hc_res == 1, "SZ")
+hc_res <- replace(hc_res, hc_res == 2, "Control")
+
+aluv_data = as.data.frame(table(names(hc_res),hc_res, coldata$dex))
+ggplot(aluv_data,
+     aes(y = Freq, axis1 = Var1, axis2 = hc_res)) +
+geom_alluvium(aes(fill = Var3), width = 1/12) +
+geom_stratum(width = 1/12, fill = "black", color = "grey") +
+geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
+scale_x_discrete(limits = c("samples", "cluster groups"), expand = c(.05, .05)) +
+scale_fill_brewer(type = "qual", palette = "Set1") +
+ggtitle("alluvial diagram for hierarchical clustering with 5,000 genes")
+
 ```
 After running hclust, we are able to view the dendrograms of the hierarchical clustering method. Looking first at the results from the top 5000 variable genes, it is clear that the dendrogram splits into 2 main clusters. This is why the k value 2 was chosen for the clustering in the heatmap below. Changing the k value created more clusters but left 2 with majority of the genes and the rest with either 0 genes or very few in the cluster.
 
@@ -310,6 +375,7 @@ hclust_results <- replace(hclust_results, hclust_results == 2, "Control")
 
 chisq <- chisq.test(coldata$dex, hclust_results)
 chisq
+
 
 ```
 
