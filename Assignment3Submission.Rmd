@@ -192,6 +192,13 @@ Heatmap(
 ```
 Chi-Squared portion for Hierarchical Clustering
 ```{r}
+sample_cluster <- hclust(dist(t(d)), method="ward.D")
+hclust_results <- cutree(sample_cluster, k = 2)
+hclust_results <- replace(hclust_results, hclust_results == 1, "SZ")
+hclust_results <- replace(hclust_results, hclust_results == 2, "Control")
+
+chisq <- chisq.test(coldata$dex, hclust_results)
+chisq
 
 ```
 
