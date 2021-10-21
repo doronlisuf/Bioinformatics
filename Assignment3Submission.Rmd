@@ -218,7 +218,7 @@ di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
-plot(hc)
+plot(hc, main = "Dendrogram for 10 Genes")
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
 hc_res <- replace(hc_res, hc_res == 2, "SZ")
@@ -244,7 +244,7 @@ di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
-plot(hc)
+plot(hc, main = "Dendrogram for 100 Genes")
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
 hc_res <- replace(hc_res, hc_res == 2, "SZ")
@@ -270,7 +270,7 @@ di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
-plot(hc)
+plot(hc, main = "Dendrogram for 1000 Genes")
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
 hc_res <- replace(hc_res, hc_res == 2, "SZ")
@@ -296,7 +296,7 @@ di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
-plot(hc)
+plot(hc, main = "Dendrogram for 10000 Genes")
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
 hc_res <- replace(hc_res, hc_res == 2, "SZ")
@@ -322,7 +322,7 @@ di <- dist(t(d))
 
 #perform hclustering and plot dendrogram
 hc <- hclust(di, method="ward.D")
-plot(hc)
+plot(hc, main = "Dendrogram for 5000 Genes")
 
 hc_res <- cutree(hclust(dist(t(d)), method="ward.D"), 2)
 hc_res <- replace(hc_res, hc_res == 2, "SZ")
@@ -414,7 +414,7 @@ Seurat::ElbowPlot(pbmc)
 #K-nearest neighbor (KNN) graph based on the euclidean distance in PCA space
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 pbmc <- Seurat::FindClusters(pbmc, resolution = 0.95)
-head(Seurat::Idents(pbmc),42)
+#head(Seurat::Idents(pbmc),42)
 #saving the final classes from the clustering
 idents <- as.matrix(Seurat::Idents(pbmc))
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
@@ -444,30 +444,30 @@ dds <- dds[rowSums(counts(dds)) > 1,]
 
 vst <- vst(dds,blind = FALSE)
 sampleDists <- dist(t(assay(vst)))
-sampleDists
+#sampleDists
 
 
 sampleDistMatrix <- as.matrix( sampleDists )
 rownames(sampleDistMatrix) <- paste( vst$V1, sep = " - " )
 colnames(sampleDistMatrix) <- NULL
 colors <- colorRampPalette( rev(brewer.pal(9, "Reds")) )(255)
-sampleDistMatrix
+#sampleDistMatrix
 #Heatmap of sample-to-sample distances
 pheatmap(sampleDistMatrix,clustering_distance_rows = sampleDists,
          clustering_distance_cols = sampleDists,col = colors)
 topVarGenes <- head(order(rowVars(assay(vst)), decreasing = TRUE), 5000)
-topVarGenes
+#topVarGenes
 mat  <- assay(vst)[topVarGenes, ]
 
 mat<-mat-rowMeans(mat)
-mat
+#mat
 anno <- as.data.frame(colData(vst)[c("V1")])
 pheatmap(mat, annotation_col = anno)
 
 #Create an alluvial diagram 
 
 aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
-aluv_data
+#aluv_data
 ggplot(aluv_data,
        aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
   geom_alluvium(aes(fill = Var3), width = 1/12) +
@@ -498,26 +498,26 @@ in this specific method we are not selecting  k, Setting the resolution paramete
 ```{r}
 # performing knn clustring method with 10000 genes.
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
-pbmc
-head(pbmc@meta.data, 5)
+#pbmc
+#head(pbmc@meta.data, 5)
 pbmc <- Seurat::NormalizeData(pbmc)
 pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 10000)
-head(pbmc@assays, 5)
+#head(pbmc@assays, 5)
 all.genes <- rownames(pbmc)
 pbmc <- Seurat::ScaleData(pbmc, features = all.genes)
 pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43)
 Seurat::DimPlot(pbmc, reduction = "pca")
-pbmc
+#pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
 pbmc <- Seurat::FindClusters(pbmc, resolution = 1.)
-head(Seurat::Idents(pbmc),42)
+#head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
     
 aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
-  aluv_data
+  #aluv_data
   ggplot(aluv_data,
        aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
   geom_alluvium(aes(fill = Var3), width = 1/12) +
@@ -541,26 +541,26 @@ in the end we will plot the alluvial plot and compute the chi-squared test.
 ```{r}
 # performing knn clustring method with 1000 genes.
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
-pbmc
-head(pbmc@meta.data, 5)
+#pbmc
+#head(pbmc@meta.data, 5)
 pbmc <- Seurat::NormalizeData(pbmc)
 pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 1000)
-head(pbmc@assays, 5)
+#head(pbmc@assays, 5)
 all.genes <- rownames(pbmc)
 pbmc <- Seurat::ScaleData(pbmc, features = all.genes)
 pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43)
 Seurat::DimPlot(pbmc, reduction = "pca")
-pbmc
+#pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
 pbmc <- Seurat::FindClusters(pbmc, resolution = 0.95)
-head(Seurat::Idents(pbmc),42)
+#head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
 
 aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
-  aluv_data
+  #aluv_data
   ggplot(aluv_data,
        aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
   geom_alluvium(aes(fill = Var3), width = 1/12) +
@@ -583,26 +583,26 @@ in the end we will plot the alluvial plot and compute the chi-squared test.
 ```{r}
 # performing knn clustring method with 100 genes.
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
-pbmc
-head(pbmc@meta.data, 5)
+#pbmc
+#head(pbmc@meta.data, 5)
 pbmc <- Seurat::NormalizeData(pbmc)
 pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 100)
-head(pbmc@assays, 5)
+#head(pbmc@assays, 5)
 all.genes <- rownames(pbmc)
 pbmc <- Seurat::ScaleData(pbmc, features = all.genes)
 pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43)
 Seurat::DimPlot(pbmc, reduction = "pca")
-pbmc
+#pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:20)
 
 pbmc <- Seurat::FindClusters(pbmc, resolution = 0.95)
-head(Seurat::Idents(pbmc),42)
+#head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:20)
 Seurat::DimPlot(pbmc, reduction = "umap")
 
 aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
-  aluv_data
+  #aluv_data
   ggplot(aluv_data,
        aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
   geom_alluvium(aes(fill = Var3), width = 1/12) +
@@ -625,26 +625,26 @@ in the end we will plot the alluvial plot and compute the chi-squared test.
 ```{r}
 # performing knn clustring method with 10 genes.
 pbmc <- Seurat::CreateSeuratObject(counts = cts, project = "pbmc3k", min.cells = 3, min.features = 200)
-pbmc
-head(pbmc@meta.data, 5)
+#pbmc
+#head(pbmc@meta.data, 5)
 pbmc <- Seurat::NormalizeData(pbmc)
 pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 10)
-head(pbmc@assays, 5)
+#head(pbmc@assays, 5)
 all.genes <- rownames(pbmc)
 pbmc <- Seurat::ScaleData(pbmc, features = all.genes)
 pbmc <- Seurat::RunPCA(pbmc, features = Seurat::VariableFeatures(pbmc), npcs =43)
 Seurat::DimPlot(pbmc, reduction = "pca")
-pbmc
+#pbmc
 Seurat::ElbowPlot(pbmc)
 pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:8)
 
 pbmc <- Seurat::FindClusters(pbmc, resolution =0.95)
-head(Seurat::Idents(pbmc),42)
+#head(Seurat::Idents(pbmc),42)
 pbmc <- Seurat::RunUMAP(pbmc, dims = 1:8)
 Seurat::DimPlot(pbmc, reduction = "umap")
 
 aluv_data = as.data.frame(table(Seurat::Cells(pbmc),Seurat::Idents(pbmc), coldata$dex))
-  aluv_data
+  #aluv_data
   ggplot(aluv_data,
        aes(y = Freq, axis1 = Var1, axis2 = Var2)) +
   geom_alluvium(aes(fill = Var3), width = 1/12) +
@@ -662,14 +662,6 @@ Comparing to the results of running the clustering method with 10, 100, 1000, an
 
 
 ```{r}
-data
-
-p_matrix <- as.matrix(data)
-p_adjust <- p.adjust(p_matrix,method="BH")
-p_adjust
-
-stat_table <- data.frame(  p_sq = t(p_matrix) , p_adjust_sq = p_adjust)
-stat_table 
 
 pairs <- as.data.frame(coldata)
 colnames(pairs)[1] <- "samples"
@@ -677,7 +669,22 @@ pairs$knn <- knn_res
 pairs$consensus <- consensus_res
 pairs$hc <- hc_res
 
-ggplot(pairs) + 
-  aes(fill="red")+
-  stat_cross()
+all_statistical_results <- data.frame("KNN_results" = c(1,1,0), "consensus_results" = c(1,1,0), "hclust_results" = c(1,1,0))
+rownames(all_statistical_results) <- c("chisq value", "Original P value", "Adjusted P Value")
+
+chisq <- chisq.test(coldata$dex, pairs$hc)
+all_statistical_results$hclust_results <- c(chisq$statistic, chisq$p.value, 0)
+
+chisq <- chisq.test(coldata$dex, pairs$consensus)
+all_statistical_results$consensus_results <- c(chisq$statistic, chisq$p.value, 0)
+
+chisq <- chisq.test(coldata$dex, pairs$knn)
+
+all_statistical_results$KNN_results <- c(chisq$statistic, chisq$p.value, 0)
+tempPvalues <- p.adjust(all_statistical_results[2,1:3],method="BH")
+all_statistical_results[3,1] <- tempPvalues[1]
+all_statistical_results[3,2] <- tempPvalues[2]
+all_statistical_results[3,3] <- tempPvalues[3]
+all_statistical_results
 ```
+Looking at original p value compared to the adjusted p value, the consensus clustering results are the same, knn clustering is very different, whereas hierarchical clustering is somewhat larger.
